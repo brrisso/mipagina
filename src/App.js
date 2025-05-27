@@ -5,21 +5,25 @@ import Proyectos from './paginas/Proyectos';
 import Juegos from './paginas/Juegos';
 import Contacto from './paginas/Contacto';
 import Blog from './paginas/Blog';
+import Layout from './componentes/Layout';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/proyectos" element={<Proyectos />} />
-        <Route path="/juegos" element={<Juegos />} />
-        <Route path="/contacto" element={<Contacto />} />
-        <Route path="/blog" element={<Blog />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/proyectos" element={<Proyectos />} />
+          <Route path="/juegos" element={<Juegos />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/blog" element={<Blog />} />
+        </Routes>
+      </Layout>
     </Router>
   );
 }
 
 export default App;
+
 
