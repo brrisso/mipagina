@@ -6,6 +6,7 @@ import Juegos from './paginas/Juegos';
 import Contacto from './paginas/Contacto';
 import Blog from './paginas/Blog';
 import Layout from './componentes/Layout';
+import Snake from './paginas/Snake';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/juegos" element={<Juegos />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/snake" element={<Snake />} />
         </Routes>
       </Layout>
     </Router>
