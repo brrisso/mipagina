@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './Snake.css';
 
 const TAMANO = 10;
@@ -15,7 +15,7 @@ const Snake = () => {
   const [gameOver, setGameOver] = useState(false);
   const [intentos, setIntentos] = useState(1);
 
-  const moverSnake = () => {
+  const moverSnake = useCallback (() => {
     const nuevaCabeza = {
       x: snake[0].x + direccion.x,
       y: snake[0].y + direccion.y,
@@ -39,13 +39,13 @@ const Snake = () => {
     }
 
     setSnake(nuevaSnake);
-  };
+  }, [snake, direccion, comida]);
 
   useEffect(() => {
     if (gameOver) return;
     const intervalo = setInterval(moverSnake, 200);
     return () => clearInterval(intervalo);
-  }, [snake, direccion, gameOver]);
+  }, [moverSnake, gameOver]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
