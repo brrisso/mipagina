@@ -45,7 +45,7 @@ const Snake = () => {
     if (gameOver) return;
     const intervalo = setInterval(moverSnake, 200);
     return () => clearInterval(intervalo);
-  }, [snake, direccion, gameOver, moverSnake]);
+  }, [snake, direccion, gameOver]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
