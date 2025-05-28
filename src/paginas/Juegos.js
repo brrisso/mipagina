@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import snakeImg from '../assets/snake-preview.jpg';
 
-const Juegos = () => {
+function Juegos() {
   return (
     <div style={{ padding: '2rem' }}>
       <h1>🎮 Zona de Juegos</h1>
