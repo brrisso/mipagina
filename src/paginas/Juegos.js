@@ -3,9 +3,16 @@ import { Link } from 'react-router-dom';
 
 function Juegos() {
   return (
-    <div>
-      <h1>Juegos</h1>
-      <Link to="/snake" style={{ color: '#fff', marginRight: '15px' }}>Snake</Link>
+    <div style={{ padding: '2rem' }}>
+      <h1>🎮 Juegos</h1>
+      <ul>
+        <li>
+          <Link to="/snake" style={{ color: '#4CAF50', fontWeight: 'bold' }}>
+            🐍 Jugar Snake
+          </Link>
+        </li>
+        {/* Aquí puedes agregar más juegos después */}
+      </ul>
     </div>
   );
 }
