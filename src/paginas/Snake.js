@@ -14,6 +14,7 @@ const Snake = () => {
   const [comida, setComida] = useState(generarComida());
   const [gameOver, setGameOver] = useState(false);
   const [intentos, setIntentos] = useState(1);
+  const [puntuacion, setPuntuacion] = useState(0);
 
   const moverSnake = useCallback (() => {
     const nuevaCabeza = {
@@ -33,7 +34,15 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      setComida(generarComida());
+      let nuevaComida;
+
+      do {
+        nuevaComida = generarComida();
+      } while (snake.some(seg => seg.x === nuevaComida.x && seg.y === nuevaComida.y));
+
+      setComida(nuevaComida);
+      setPuntuacion(puntuacion + 1);
+
     } else {
       nuevaSnake.pop();
     }
@@ -67,13 +76,14 @@ const Snake = () => {
     setComida(generarComida());
     setGameOver(false);
     setIntentos(intentos + 1);
+    setPuntuacion(0);
   };
 
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h2>🐍 Snake Game</h2>
       <p>Intento #{intentos}</p>
-      {gameOver && <p style={{ color: 'red' }}>💀 ¡Game Over!</p>}
+      {gameOver && <p style={{ color: 'red' }}>💀 ¡Game Over!</p> && <p>Has Conseguido {puntuacion} puntos!!</p>}
       <div className="tablero" style={{ margin: '0 auto' }}>
         {[...Array(TAMANO)].map((_, y) =>
           <div key={y} className="fila">
