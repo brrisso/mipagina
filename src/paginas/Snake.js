@@ -34,14 +34,17 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      let nuevaComida;
+      const generarComidaValida = () => {
+        let nuevaComida;
 
-      do {
-        nuevaComida = generarComida();
-      } while (snake.some(seg => seg.x === nuevaComida.x && seg.y === nuevaComida.y));
+        do {
+          nuevaComida = generarComida();
+        } while (snake.some(seg => seg.x === nuevaComida.x && seg.y === nuevaComida.y));
+        return nuevaComida;
+      }
 
-      setComida(nuevaComida);
-      setPuntuacion(puntuacion + 1);
+      setComida(generarComidaValida());
+      setPuntuacion(prev => prev + 1);
 
     } else {
       nuevaSnake.pop();
