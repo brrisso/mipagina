@@ -8,6 +8,7 @@ const generarComida = () => ({
   y: Math.floor(Math.random() * TAMANO),
 });
 
+
 const Snake = () => {
   const [snake, setSnake] = useState([{ x: 5, y: 5 }]);
   const [direccion, setDireccion] = useState({ x: 0, y: -1 });
@@ -15,6 +16,26 @@ const Snake = () => {
   const [gameOver, setGameOver] = useState(false);
   const [intentos, setIntentos] = useState(1);
   const [puntuacion, setPuntuacion] = useState(0);
+
+  /*const generarComidaValida = useCallback(() => {
+  let nueva;
+    
+  while (true) {
+    nueva = generarComida();
+    if (!snake.some(seg => seg.x === nueva.x && seg.y === nueva.y)) break;
+  }
+  return nueva;
+  }, [snake]);*/
+  const generarComidaValida = useCallback(() => {
+  const esValida = (pos) =>
+    !snake.some(seg => seg.x === pos.x && seg.y === pos.y);
+
+  let nueva = generarComida();
+  while (!esValida(nueva)) {
+    nueva = generarComida();
+  }
+  return nueva;
+}, [snake]);
 
   const moverSnake = useCallback (() => {
     const nuevaCabeza = {
@@ -34,24 +55,14 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      const generarComidaValida = () => {
-        let nuevaComida;
-
-        do {
-          nuevaComida = generarComida();
-        } while (snake.some(seg => seg.x === nuevaComida.x && seg.y === nuevaComida.y));
-        return nuevaComida;
-      }
-
       setComida(generarComidaValida());
       setPuntuacion(prev => prev + 1);
-
     } else {
       nuevaSnake.pop();
     }
 
     setSnake(nuevaSnake);
-  }, [snake, direccion, comida]);
+  }, [snake, direccion, comida, generarComidaValida]);
 
   useEffect(() => {
     if (gameOver) return;
