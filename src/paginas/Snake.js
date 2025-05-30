@@ -146,18 +146,7 @@ const Snake = () => {
           </div>
         )}
       </div>
-          {mejoresPuntuaciones.length > 0 && (
-  <div style={{ marginTop: '2rem' }}>
-    <h3>🏆 Mejores Puntuaciones</h3>
-    <ul style={{ listStyle: 'none', padding: 0 }}>
-      {mejoresPuntuaciones.map((item, idx) => (
-        <li key={idx}>
-          {idx + 1}. {item.nombre || "Jugador"} — {item.puntuacion} pts
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
+      <div>
       {gameOver && (
         <button
           onClick={reiniciarJuego}
@@ -175,6 +164,20 @@ const Snake = () => {
           🔄 Reiniciar
         </button>
       )}
+      </div>
+      {mejoresPuntuaciones.length > 0 && (
+        <div style={{ marginTop: '2rem' }}>
+          <h3>🏆 Mejores Puntuaciones</h3>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {mejoresPuntuaciones.map((item, idx) => (
+              <li key={idx}>
+                {idx + 1}. {item.nombre || "Jugador"} — {item.puntuacion} pts
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
     </div>
   );
 };
