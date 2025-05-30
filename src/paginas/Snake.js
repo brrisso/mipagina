@@ -10,7 +10,6 @@ const generarComida = () => ({
   y: Math.floor(Math.random() * TAMANO),
 });
 
-
 const Snake = () => {
   const [snake, setSnake] = useState([{ x: 5, y: 5 }]);
   const [direccion, setDireccion] = useState({ x: 0, y: -1 });
@@ -18,6 +17,22 @@ const Snake = () => {
   const [gameOver, setGameOver] = useState(false);
   const [intentos, setIntentos] = useState(1);
   const [puntuacion, setPuntuacion] = useState(0);
+  const [mejoresPuntuaciones, setMejoresPuntuaciones] = useState([]);
+
+  useEffect(() => {
+  const obtenerPuntuaciones = async () => {
+    const q = query(
+      collection(db, "puntuaciones"),
+      orderBy("puntuacion", "desc"),
+      limit(5)
+    );
+    const querySnapshot = await getDocs(q);
+    const resultados = querySnapshot.docs.map(doc => doc.data());
+    setMejoresPuntuaciones(resultados);
+  };
+
+  obtenerPuntuaciones();
+}, [intentos]); // Se actualiza cada vez que se reinicia el juego
 
   const generarComidaValida = useCallback(() => {
     const esValida = (pos) =>
@@ -81,14 +96,27 @@ const Snake = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [direccion]);
 
-  const reiniciarJuego = () => {
-    setSnake([{ x: 5, y: 5 }]);
-    setDireccion({ x: 0, y: -1 });
-    setComida(generarComida());
-    setGameOver(false);
-    setIntentos(intentos + 1);
-    setPuntuacion(0);
-  };
+  const reiniciarJuego = async () => {
+  const nombre = prompt("¿Cuál es tu nombre?");
+  if (nombre) {
+    try {
+      await addDoc(collection(db, "puntuaciones"), {
+        nombre,
+        puntuacion,
+        fecha: new Date()
+      });
+    } catch (e) {
+      console.error("Error al guardar puntuación:", e);
+    }
+  }
+
+  setSnake([{ x: 5, y: 5 }]);
+  setDireccion({ x: 0, y: -1 });
+  setComida(generarComida());
+  setGameOver(false);
+  setIntentos(intentos + 1);
+  setPuntuacion(0);
+};
 
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -118,7 +146,18 @@ const Snake = () => {
           </div>
         )}
       </div>
-
+          {mejoresPuntuaciones.length > 0 && (
+  <div style={{ marginTop: '2rem' }}>
+    <h3>🏆 Mejores Puntuaciones</h3>
+    <ul style={{ listStyle: 'none', padding: 0 }}>
+      {mejoresPuntuaciones.map((item, idx) => (
+        <li key={idx}>
+          {idx + 1}. {item.nombre || "Jugador"} — {item.puntuacion} pts
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
       {gameOver && (
         <button
           onClick={reiniciarJuego}
