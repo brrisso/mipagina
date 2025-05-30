@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import './Snake.css';
+import { db } from "../firebase";
+import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 const TAMANO = 10;
 
@@ -17,25 +19,16 @@ const Snake = () => {
   const [intentos, setIntentos] = useState(1);
   const [puntuacion, setPuntuacion] = useState(0);
 
-  /*const generarComidaValida = useCallback(() => {
-  let nueva;
-    
-  while (true) {
-    nueva = generarComida();
-    if (!snake.some(seg => seg.x === nueva.x && seg.y === nueva.y)) break;
-  }
-  return nueva;
-  }, [snake]);*/
   const generarComidaValida = useCallback(() => {
-  const esValida = (pos) =>
-    !snake.some(seg => seg.x === pos.x && seg.y === pos.y);
+    const esValida = (pos) =>
+      !snake.some(seg => seg.x === pos.x && seg.y === pos.y);
 
-  let nueva = generarComida();
-  while (!esValida(nueva)) {
-    nueva = generarComida();
-  }
-  return nueva;
-}, [snake]);
+    let nueva = generarComida();
+    while (!esValida(nueva)) {
+      nueva = generarComida();
+    }
+    return nueva;
+  }, [snake]);
 
   const moverSnake = useCallback (() => {
     const nuevaCabeza = {
@@ -72,6 +65,10 @@ const Snake = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+      if (teclas.includes(e.key)) {
+        e.preventDefault(); // Evita que la página se mueva tecleando
+      }
       switch (e.key) {
         case 'ArrowUp': if (direccion.y !== 1) setDireccion({ x: 0, y: -1 }); break;
         case 'ArrowDown': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
