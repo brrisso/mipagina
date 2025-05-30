@@ -97,7 +97,11 @@ const Snake = () => {
     <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h2>🐍 Snake Game</h2>
       <p>Intento #{intentos}</p>
-      {gameOver && <p style={{ color: 'red' }}>💀 ¡Game Over!</p> && <p>Has Conseguido {puntuacion} puntos!!</p>}
+      {gameOver && (
+        <>
+        <p style={{ color: 'red' }}>💀 ¡Game Over!</p> 
+        <p>Has Conseguido {puntuacion} puntos!!</p>
+        </>)}
       <div className="tablero" style={{ margin: '0 auto' }}>
         {[...Array(TAMANO)].map((_, y) =>
           <div key={y} className="fila">
