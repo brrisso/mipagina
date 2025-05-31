@@ -1,0 +1,130 @@
+/* Estilos generales */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f3e8ff;
+  color: #4b0082;
+}
+
+a {
+  color: #4b0082;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #6b21a8;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e9d5ff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Navegación */
+.nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav a {
+  font-weight: 500;
+}
+
+/* Botón en vivo */
+.live-button {
+  border: 1px solid #a855f7;
+  background: white;
+  color: #4b0082;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.live-button:hover {
+  background-color: #f5f3ff;
+}
+
+/* Punto animado */
+.live-dot {
+  animation: pulse 1s infinite;
+  color: red;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Main */
+.main {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Secciones */
+.section {
+  margin-bottom: 3rem;
+}
+
+.section h2,
+.section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.section p,
+.section ul {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.section ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav {
+    justify-content: flex-start;
+  }
+
+  .main {
+    padding: 1rem;
+  }
+}
