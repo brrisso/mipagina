@@ -1,0 +1,55 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f5ff;
+  color: #3f1a5d;
+  padding: 4rem 2rem;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #925fe2;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #6b4c9a;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  background: url('/logo.svg') no-repeat center/cover;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #925fe230;
+  margin-bottom: 1.5rem;
+}
+
+.status {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #888;
+}
+
+.btn-twitch {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #925fe2;
+  color: white;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-twitch:hover {
+  background-color: #7b4bcb;
+}
