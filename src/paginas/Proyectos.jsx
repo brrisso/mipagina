@@ -1,7 +1,7 @@
 import React from 'react';
 
 const proyectos = [
-  { nombre: 'Tu página actual', descripcion: 'Web React con routing y deploy automático en Netlify.', link: '#' },
+  { nombre: 'Snake', descripcion: 'jueguito que estoy armando', link: '/snake' },
 ];
 
 function Proyectos(){
