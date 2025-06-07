@@ -1,55 +1,132 @@
-.home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #f9f5ff;
-  color: #3f1a5d;
-  padding: 4rem 2rem;
-  min-height: 100vh;
+/* ==== PALETA DE COLORES ==== */
+:root {
+  --lavanda: #f5f3ff;
+  --menta: #d1f5e1;
+  --morado-pastel: #c084fc;
+  --morado-hover: #a855f7;
+  --gris-texto: #2d2d2d;
+  --fondo-oscuro: #1f1b2e;
+  --fondo-claro: #fefefe;
+}
+
+/* ==== ESTILOS GENERALES ==== */
+.home-container {
   font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+.home-container.light {
+  background-color: var(--lavanda);
+  color: var(--gris-texto);
+}
+
+.home-container.dark {
+  background-color: var(--fondo-oscuro);
+  color: var(--fondo-claro);
+}
+
+main {
+  padding: 4rem 1rem 2rem;
   text-align: center;
 }
 
+/* ==== HERO ==== */
 .title {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #925fe2;
-  margin-bottom: 0.5rem;
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color:#a855f7;
 }
 
 .subtitle {
-  font-size: 1.25rem;
-  color: #6b4c9a;
-  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  color: #777;
 }
 
 .avatar {
-  width: 160px;
-  height: 160px;
-  background: url('/logo.svg') no-repeat center/cover;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  box-shadow: 0 0 20px #925fe230;
+  object-fit: cover;
+  border: 3px solid var(--morado-pastel);
   margin-bottom: 1.5rem;
 }
 
 .status {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  color: #888;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #999;
 }
 
-.btn-twitch {
+/* ==== REDES SOCIALES ==== */
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.social {
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.social:hover {
+  color: var(--morado-hover);
+}
+
+/* ==== SECCIONES ==== */
+.section {
+  max-width: 720px;
+  margin: 4rem auto;
+  text-align: left;
+  padding: 0 1rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.section-text {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.section-list {
+  list-style: disc;
+  padding-left: 1.2rem;
+  line-height: 1.8;
+}
+
+/* ==== BOTÓN DE CONTACTO ==== */
+.btn-contact {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background-color: #925fe2;
+  background-color: var(--morado-pastel);
   color: white;
-  border-radius: 9999px;
   text-decoration: none;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
-.btn-twitch:hover {
-  background-color: #7b4bcb;
+.btn-contact:hover {
+  background-color: var(--morado-hover);
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+  .section {
+    text-align: center;
+  }
+
+  .section-list {
+    padding-left: 0;
+  }
 }

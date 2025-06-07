@@ -1,11 +1,11 @@
 import React from 'react';
+import './Footer.css';
 
-function Footer() {
+export default function Footer() {
   return (
-    <footer style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f1f1f1' }}>
-      <p>© {new Date().getFullYear()} Bruno Risso | PepePow.dev</p>
+    <footer className="footer">
+      © {new Date().getFullYear()} Pepepow · Todos los derechos reservados
     </footer>
   );
 }
 
-export default Footer;
