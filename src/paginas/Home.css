@@ -1,53 +1,53 @@
-/* ==== PALETA DE COLORES ==== */
 :root {
   --lavanda: #f5f3ff;
   --menta: #d1f5e1;
+  --durazno: #ffe0b2;
   --morado-pastel: #c084fc;
   --morado-hover: #a855f7;
   --gris-texto: #2d2d2d;
   --fondo-oscuro: #1f1b2e;
   --fondo-claro: #fefefe;
+  --rosado-pastel: #fde2e4;
+  --blanco-rosado: #fef6fb;
 }
 
-/* ==== ESTILOS GENERALES ==== */
-.home-container {
-  font-family: 'Segoe UI', sans-serif;
-  min-height: 100vh;
-  transition: background 0.3s, color 0.3s;
+.section-even {
+  background-color: var(--morado-pastel);
 }
 
-.home-container.light {
-  background-color: var(--lavanda);
-  color: var(--gris-texto);
+.section-odd {
+  background-color: var(--blanco-rosado);
 }
 
-.home-container.dark {
-  background-color: var(--fondo-oscuro);
-  color: var(--fondo-claro);
+
+/*separador sutil */
+.section {
+  padding: 4rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background 0.4s ease;
 }
 
 main {
-  padding: 4rem 1rem 2rem;
   text-align: center;
+  padding: 2rem 1rem;
 }
 
-/* ==== HERO ==== */
+/* HERO */
 .title {
   font-size: 2.8rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color:#a855f7;
 }
 
 .subtitle {
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-  color: #777;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #666;
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--morado-pastel);
@@ -60,7 +60,7 @@ main {
   color: #999;
 }
 
-/* ==== REDES SOCIALES ==== */
+/* REDES */
 .social-links {
   display: flex;
   justify-content: center;
@@ -71,31 +71,30 @@ main {
 
 .social {
   color: inherit;
-  transition: color 0.2s ease;
+  transition: color 0.3s;
 }
 
 .social:hover {
   color: var(--morado-hover);
 }
 
-/* ==== SECCIONES ==== */
+/* SECCIONES */
 .section {
-  max-width: 720px;
-  margin: 4rem auto;
+  padding: 4rem 1rem;
   text-align: left;
-  padding: 0 1rem;
 }
 
 .section-title {
   font-size: 1.8rem;
-  margin-bottom: 1rem;
   font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .section-text {
   font-size: 1rem;
-  margin-bottom: 1rem;
   line-height: 1.6;
+  max-width: 700px;
+  margin-bottom: 1rem;
 }
 
 .section-list {
@@ -104,23 +103,24 @@ main {
   line-height: 1.8;
 }
 
-/* ==== BOTÓN DE CONTACTO ==== */
+/* CONTACTO */
 .btn-contact {
   display: inline-block;
+  margin-top: 1rem;
   padding: 0.75rem 1.5rem;
   background-color: var(--morado-pastel);
   color: white;
   text-decoration: none;
   border-radius: 6px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .btn-contact:hover {
   background-color: var(--morado-hover);
 }
 
-/* ==== RESPONSIVE ==== */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .section {
     text-align: center;
@@ -130,3 +130,4 @@ main {
     padding-left: 0;
   }
 }
+

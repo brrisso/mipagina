@@ -12,6 +12,48 @@ export default function Home() {
     setIsLive(live);
   }, []);
 
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.2, duration: 0.6 }
+    })
+  };
+
+  const secciones = [
+    {
+      id: "about",
+      title: "¿Qué es Pepepow?",
+      text: "Un laboratorio creativo donde exploro desarrollo web, diseño, comunicación digital y creación de contenido. Busco generar valor desde una mirada profesional y entretenida."
+    },
+    {
+      id: "projects",
+      title: "En qué estoy trabajando",
+      customList: [
+        "Página web de Pepepow: Plataforma digital con herramientas, ideas y proyectos personales.",
+        "Contenido en Twitch: Streams de gaming, conversación y desarrollo de ideas.",
+        "Aprendizaje continuo: Explorando desarrollo front-end, diseño UX y herramientas de IA."
+      ]
+    },
+    {
+      id: "games",
+      title: "Juegos",
+      text: "Estoy desarrollando ideas de juegos interactivos, como \"Emissary Clash\", que combinan estrategia y gacha con elementos narrativos únicos."
+    },
+    {
+      id: "blog",
+      title: "Blog",
+      text: "Aquí compartiré aprendizajes, proyectos y comedia."
+    },
+    {
+      id: "contact",
+      title: "Contacto",
+      text: "¿Te interesa colaborar o simplemente saludar?",
+      isContact: true
+    }
+  ];
+
   return (
     <main id="top">
       <motion.h1
@@ -62,41 +104,31 @@ export default function Home() {
         <a href="https://github.com/brrisso" target="_blank" rel="noopener noreferrer" className="social"><FaGithub /></a>
       </motion.div>
 
-      <section id="about" className="section">
-        <h2 className="section-title">¿Qué es Pepepow?</h2>
-        <p className="section-text">
-          Un laboratorio creativo donde exploro desarrollo web, diseño, comunicación digital y creación de contenido. Busco generar valor desde una mirada profesional y entretenida.
-        </p>
-      </section>
-
-      <section id="projects" className="section">
-        <h2 className="section-title">En qué estoy trabajando</h2>
-        <ul className="section-list">
-          <li><strong>Página web de Pepepow</strong>: Plataforma digital con herramientas, ideas y proyectos personales.</li>
-          <li><strong>Contenido en Twitch</strong>: Streams de gaming, conversación y desarrollo de ideas.</li>
-          <li><strong>Aprendizaje continuo</strong>: Explorando desarrollo front-end, diseño UX y herramientas de IA.</li>
-        </ul>
-      </section>
-
-      <section id="games" className="section">
-        <h2 className="section-title">Juegos</h2>
-        <p className="section-text">
-          Estoy desarrollando ideas de juegos interactivos, como "Emissary Clash", que combinan estrategia y gacha con elementos narrativos únicos.
-        </p>
-      </section>
-
-      <section id="blog" className="section">
-        <h2 className="section-title">Blog</h2>
-        <p className="section-text">
-          Aquí compartiré aprendizajes, proyectos y comedia.
-        </p>
-      </section>
-
-      <section id="contact" className="section">
-        <h2 className="section-title">Contacto</h2>
-        <p className="section-text">¿Te interesa colaborar o simplemente saludar?</p>
-        <a href="mailto:brunorissoosorio@gmail.com" className="btn-contact">💬 ¡Hablemos!</a>
-      </section>
+      {secciones.map((section, i) => (
+        <motion.section
+          key={section.id}
+          id={section.id}
+          className={`section section-${i % 2 === 0 ? 'even' : 'odd'}`}
+          custom={i + 1}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+        >
+          <h2 className="section-title">{section.title}</h2>
+          {section.text && <p className="section-text">{section.text}</p>}
+          {section.customList && (
+            <ul className="section-list">
+              {section.customList.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          )}
+          {section.isContact && (
+            <a href="mailto:brunorissoosorio@gmail.com" className="btn-contact">💬 ¡Hablemos!</a>
+          )}
+        </motion.section>
+      ))}
     </main>
   );
 }
