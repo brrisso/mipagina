@@ -27,7 +27,7 @@ const Snake = () => {
     const q = query(
       collection(db, COLECCION),
       orderBy("puntuacion", "desc"),
-      limit(5)
+      limit(50)
     );
     const querySnapshot = await getDocs(q);
     const resultados = querySnapshot.docs.map(doc => doc.data());
@@ -107,7 +107,7 @@ const Snake = () => {
         nombre,
         puntuacion,
         fecha: new Date(),
-        secretkey: SECRET_KEY
+        secretKey: SECRET_KEY
       });
     } catch (e) {
       console.error("Error al guardar puntuación:", e);
