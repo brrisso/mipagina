@@ -4,6 +4,9 @@ import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 const TAMANO = 10;
+const COLECCION = "puntuaciones"; 
+const SECRET_KEY = "clavesupersecreta123"; 
+
 
 const generarComida = () => ({
   x: Math.floor(Math.random() * TAMANO),
@@ -22,7 +25,7 @@ const Snake = () => {
   useEffect(() => {
   const obtenerPuntuaciones = async () => {
     const q = query(
-      collection(db, "puntuaciones"),
+      collection(db, COLECCION),
       orderBy("puntuacion", "desc"),
       limit(5)
     );
@@ -100,10 +103,11 @@ const Snake = () => {
   const nombre = prompt("¿Cuál es tu nombre?");
   if (nombre) {
     try {
-      await addDoc(collection(db, "puntuaciones"), {
+      await addDoc(collection(db, COLECCION), {
         nombre,
         puntuacion,
-        fecha: new Date()
+        fecha: new Date(),
+        secretkey: SECRET_KEY
       });
     } catch (e) {
       console.error("Error al guardar puntuación:", e);
