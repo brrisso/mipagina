@@ -27,7 +27,7 @@ const Snake = () => {
     const q = query(
       collection(db, COLECCION),
       orderBy("puntuacion", "desc"),
-      limit(50)
+      limit(10)
     );
     const querySnapshot = await getDocs(q);
     const resultados = querySnapshot.docs.map(doc => doc.data());
