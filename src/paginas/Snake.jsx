@@ -37,16 +37,16 @@ const Snake = () => {
   obtenerPuntuaciones();
 }, [intentos]); // Se actualiza cada vez que se reinicia el juego
 
-  const generarComidaValida = useCallback(() => {
+  const generarComidaValida = useCallback((snakeActual) => {
     const esValida = (pos) =>
-      !snake.some(seg => seg.x === pos.x && seg.y === pos.y);
+      !snakeActual.some(seg => seg.x === pos.x && seg.y === pos.y);
 
     let nueva = generarComida();
     while (!esValida(nueva)) {
       nueva = generarComida();
     }
     return nueva;
-  }, [snake]);
+  }, []);
 
   const moverSnake = useCallback (() => {
     const nuevaCabeza = {
@@ -66,7 +66,8 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      setComida(generarComidaValida());
+      const nuevaSnake = [nuevaCabeza, ...snake];
+      setComida(generarComidaValida(nuevaSnake));
       setPuntuacion(prev => prev + 1);
     } else {
       nuevaSnake.pop();
@@ -175,7 +176,7 @@ const Snake = () => {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {mejoresPuntuaciones.map((item, idx) => (
               <li key={idx}>
-                {idx + 1}. {item.nombre || "Jugador"} — {item.puntuacion} pts
+                <strong>{idx + 1}.</strong> {item.nombre || "Jugador"} — <b>{item.puntuacion} pts</b>
               </li>
             ))}
           </ul>
