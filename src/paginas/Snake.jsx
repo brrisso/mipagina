@@ -146,7 +146,6 @@ const Snake = () => {
       }}
     >
       <h2>🐍 Snake Game</h2>
-      <p>Intento #{intentos}</p>
       {gameOver && (
         <>
           <p style={{ color: 'red' }}>💀 ¡Game Over!</p>
