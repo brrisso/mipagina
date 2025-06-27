@@ -102,7 +102,7 @@ const Snake = () => {
 
   const reiniciarJuego = async () => {
   const nombre = prompt("¿Cuál es tu nombre?");
-  if (nombre) {
+  if (nombre && puntuacion >= 30) {
     try {
       await addDoc(collection(db, COLECCION), {
         nombre,
