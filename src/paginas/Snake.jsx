@@ -38,12 +38,12 @@ const Snake = () => {
   }, [intentos]);
 
   // Enfocar el contenedor al iniciar el juego
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      juegoRef.current?.focus();
-    }, 50);
-    return () => clearTimeout(timeout);
-  }, []);
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     juegoRef.current?.focus();
+  //   }, 50);
+  //   return () => clearTimeout(timeout);
+  // }, []);
 
   const generarComidaValida = useCallback((snakeActual) => {
     const esValida = (pos) =>
@@ -99,6 +99,10 @@ const Snake = () => {
         case 'ArrowDown': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
         case 'ArrowLeft': if (direccion.x !== 1) setDireccion({ x: -1, y: 0 }); break;
         case 'ArrowRight': if (direccion.x !== -1) setDireccion({ x: 1, y: 0 }); break;
+        case 'w': if (direccion.y !== 1) setDireccion({ x: 0, y: -1 }); break;
+        case 's': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
+        case 'a': if (direccion.x !== 1) setDireccion({ x: -1, y: 0 }); break;
+        case 'd': if (direccion.x !== -1) setDireccion({ x: 1, y: 0 }); break;
         default: break;
       }
     };
@@ -134,9 +138,8 @@ const Snake = () => {
       ref={juegoRef}
       tabIndex={0}
       style={{
-        paddingTop: '4rem',
         outline: 'none',
-        padding: '2rem',
+        //padding: '2rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
