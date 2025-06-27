@@ -21,6 +21,9 @@ const Snake = () => {
   const [puntuacion, setPuntuacion] = useState(0);
   const [mejoresPuntuaciones, setMejoresPuntuaciones] = useState([]);
   const juegoRef = useRef(null);
+  const [juegoIniciado, setJuegoIniciado] = useState(false);
+  const [mostrarTableroAnimado, setMostrarTableroAnimado] = useState(false);
+
 
   useEffect(() => {
     const obtenerPuntuaciones = async () => {
@@ -37,13 +40,6 @@ const Snake = () => {
     obtenerPuntuaciones();
   }, [intentos]);
 
-  // Enfocar el contenedor al iniciar el juego
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     juegoRef.current?.focus();
-  //   }, 50);
-  //   return () => clearTimeout(timeout);
-  // }, []);
 
   const generarComidaValida = useCallback((snakeActual) => {
     const esValida = (pos) =>
@@ -84,10 +80,10 @@ const Snake = () => {
   }, [snake, direccion, comida, generarComidaValida]);
 
   useEffect(() => {
-    if (gameOver) return;
+    if (gameOver || !juegoIniciado) return;
     const intervalo = setInterval(moverSnake, 200);
     return () => clearInterval(intervalo);
-  }, [moverSnake, gameOver]);
+  }, [moverSnake, gameOver, juegoIniciado]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -131,15 +127,14 @@ const Snake = () => {
     setGameOver(false);
     setIntentos(intentos + 1);
     setPuntuacion(0);
+    setJuegoIniciado(false);
+    setMostrarTableroAnimado(false);
   };
 
   return (
     <div
-      ref={juegoRef}
-      tabIndex={0}
       style={{
         outline: 'none',
-        //padding: '2rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -155,7 +150,8 @@ const Snake = () => {
           <p>Has conseguido {puntuacion} puntos!!</p>
         </>
       )}
-      <div className="tablero" style={{ margin: '0 auto' }}>
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''}`}>
         {[...Array(TAMANO)].map((_, y) =>
           <div key={y} className="fila">
             {[...Array(TAMANO)].map((_, x) => {
@@ -174,17 +170,39 @@ const Snake = () => {
           </div>
         )}
       </div>
+            {!juegoIniciado && !gameOver && (
+          <button
+            onClick={() => {
+              setJuegoIniciado(true);
+              setMostrarTableroAnimado(true);
+              setTimeout(() => juegoRef.current?.focus(), 10);
+            }}
+            style={{
+              transition: 'all 0.2s ease',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              padding: '0.8rem 1.5rem',
+              fontSize: '1.4rem',
+              backgroundColor: '#a855f7',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              zIndex: 10,
+              boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+            }}
+          >
+            ▶ Play
+          </button>
+        )}
+      </div>
       <div>
         {gameOver && (
           <button
             onClick={() => {
               reiniciarJuego();
-              setTimeout(() => {
-               if (juegoRef.current) {
-                  juegoRef.current.focus();
-                  window.scrollBy(0,-100);
-                }
-              }, 10);
             }}
             style={{
               marginTop: '1rem',
