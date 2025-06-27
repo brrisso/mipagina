@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import './Snake.css';
 import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
@@ -6,7 +6,6 @@ import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/fir
 const TAMANO = 10;
 const COLECCION = "puntuaciones"; 
 const SECRET_KEY = "clavesupersecreta123"; 
-
 
 const generarComida = () => ({
   x: Math.floor(Math.random() * TAMANO),
@@ -21,21 +20,30 @@ const Snake = () => {
   const [intentos, setIntentos] = useState(1);
   const [puntuacion, setPuntuacion] = useState(0);
   const [mejoresPuntuaciones, setMejoresPuntuaciones] = useState([]);
+  const juegoRef = useRef(null);
 
   useEffect(() => {
-  const obtenerPuntuaciones = async () => {
-    const q = query(
-      collection(db, COLECCION),
-      orderBy("puntuacion", "desc"),
-      limit(10)
-    );
-    const querySnapshot = await getDocs(q);
-    const resultados = querySnapshot.docs.map(doc => doc.data());
-    setMejoresPuntuaciones(resultados);
-  };
+    const obtenerPuntuaciones = async () => {
+      const q = query(
+        collection(db, COLECCION),
+        orderBy("puntuacion", "desc"),
+        limit(10)
+      );
+      const querySnapshot = await getDocs(q);
+      const resultados = querySnapshot.docs.map(doc => doc.data());
+      setMejoresPuntuaciones(resultados);
+    };
 
-  obtenerPuntuaciones();
-}, [intentos]); // Se actualiza cada vez que se reinicia el juego
+    obtenerPuntuaciones();
+  }, [intentos]);
+
+  // Enfocar el contenedor al iniciar el juego
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      juegoRef.current?.focus();
+    }, 50);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const generarComidaValida = useCallback((snakeActual) => {
     const esValida = (pos) =>
@@ -48,7 +56,7 @@ const Snake = () => {
     return nueva;
   }, []);
 
-  const moverSnake = useCallback (() => {
+  const moverSnake = useCallback(() => {
     const nuevaCabeza = {
       x: snake[0].x + direccion.x,
       y: snake[0].y + direccion.y,
@@ -66,7 +74,6 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      const nuevaSnake = [nuevaCabeza, ...snake];
       setComida(generarComidaValida(nuevaSnake));
       setPuntuacion(prev => prev + 1);
     } else {
@@ -85,9 +92,8 @@ const Snake = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-      if (teclas.includes(e.key)) {
-        e.preventDefault(); // Evita que la página se mueva tecleando
-      }
+      if (teclas.includes(e.key)) e.preventDefault();
+
       switch (e.key) {
         case 'ArrowUp': if (direccion.y !== 1) setDireccion({ x: 0, y: -1 }); break;
         case 'ArrowDown': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
@@ -101,37 +107,52 @@ const Snake = () => {
   }, [direccion]);
 
   const reiniciarJuego = async () => {
-  const nombre = prompt("¿Cuál es tu nombre?");
-  if (nombre && puntuacion >= 30) {
-    try {
-      await addDoc(collection(db, COLECCION), {
-        nombre,
-        puntuacion,
-        fecha: new Date(),
-        secretKey: SECRET_KEY
-      });
-    } catch (e) {
-      console.error("Error al guardar puntuación:", e);
+    const nombre = prompt("¿Cuál es tu nombre?");
+    if (nombre && puntuacion >= 30) {
+      try {
+        await addDoc(collection(db, COLECCION), {
+          nombre,
+          puntuacion,
+          fecha: new Date(),
+          secretKey: SECRET_KEY
+        });
+      } catch (e) {
+        console.error("Error al guardar puntuación:", e);
+      }
     }
-  }
 
-  setSnake([{ x: 5, y: 5 }]);
-  setDireccion({ x: 0, y: -1 });
-  setComida(generarComida());
-  setGameOver(false);
-  setIntentos(intentos + 1);
-  setPuntuacion(0);
-};
+    setSnake([{ x: 5, y: 5 }]);
+    setDireccion({ x: 0, y: -1 });
+    setComida(generarComida());
+    setGameOver(false);
+    setIntentos(intentos + 1);
+    setPuntuacion(0);
+  };
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <div
+      ref={juegoRef}
+      tabIndex={0}
+      style={{
+        paddingTop: '4rem',
+        outline: 'none',
+        padding: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}
+    >
       <h2>🐍 Snake Game</h2>
       <p>Intento #{intentos}</p>
       {gameOver && (
         <>
-        <p style={{ color: 'red' }}>💀 ¡Game Over!</p> 
-        <p>Has Conseguido {puntuacion} puntos!!</p>
-        </>)}
+          <p style={{ color: 'red' }}>💀 ¡Game Over!</p>
+          <p>Has conseguido {puntuacion} puntos!!</p>
+        </>
+      )}
       <div className="tablero" style={{ margin: '0 auto' }}>
         {[...Array(TAMANO)].map((_, y) =>
           <div key={y} className="fila">
@@ -152,23 +173,31 @@ const Snake = () => {
         )}
       </div>
       <div>
-      {gameOver && (
-        <button
-          onClick={reiniciarJuego}
-          style={{
-            marginTop: '1rem',
-            padding: '0.6rem 1.2rem',
-            fontSize: '1rem',
-            backgroundColor: '#4CAF50',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-        >
-          🔄 Reiniciar
-        </button>
-      )}
+        {gameOver && (
+          <button
+            onClick={() => {
+              reiniciarJuego();
+              setTimeout(() => {
+               if (juegoRef.current) {
+                  juegoRef.current.focus();
+                  window.scrollBy(0,-100);
+                }
+              }, 10);
+            }}
+            style={{
+              marginTop: '1rem',
+              padding: '0.6rem 1.2rem',
+              fontSize: '1rem',
+              backgroundColor: '#4CAF50',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer'
+            }}
+          >
+            🔄 Reiniciar
+          </button>
+        )}
       </div>
       {mejoresPuntuaciones.length > 0 && (
         <div style={{ marginTop: '2rem' }}>
@@ -182,10 +211,8 @@ const Snake = () => {
           </ul>
         </div>
       )}
-
     </div>
   );
 };
 
 export default Snake;
-
