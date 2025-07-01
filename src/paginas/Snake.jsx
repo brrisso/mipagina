@@ -4,8 +4,8 @@ import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 const TAMANO = 10;
-const COLECCION = "puntuaciones"; 
-const SECRET_KEY = "clavesupersecreta123"; 
+const COLECCION = "puntuaciones";
+const SECRET_KEY = "clavesupersecreta123";
 
 const generarComida = () => ({
   x: Math.floor(Math.random() * TAMANO),
@@ -23,6 +23,11 @@ const Snake = () => {
   const juegoRef = useRef(null);
   const [juegoIniciado, setJuegoIniciado] = useState(false);
   const [mostrarTableroAnimado, setMostrarTableroAnimado] = useState(false);
+  const [ocultandoPlay, setOcultandoPlay] = useState(false);
+  const [animacionMuerte, setAnimacionMuerte] = useState(false);
+  const sonidoGameOver = useRef(null);
+  const [puedeCambiarDireccion, setPuedeCambiarDireccion] = useState(true);
+  const puedeCambiarDireccionRef = useRef(true);
 
 
   useEffect(() => {
@@ -63,7 +68,9 @@ const Snake = () => {
       nuevaCabeza.y < 0 || nuevaCabeza.y >= TAMANO ||
       snake.some(seg => seg.x === nuevaCabeza.x && seg.y === nuevaCabeza.y)
     ) {
+      setAnimacionMuerte(true);
       setGameOver(true);
+      sonidoGameOver.current?.play();
       return;
     }
 
@@ -77,6 +84,7 @@ const Snake = () => {
     }
 
     setSnake(nuevaSnake);
+    setPuedeCambiarDireccion(true);
   }, [snake, direccion, comida, generarComidaValida]);
 
   useEffect(() => {
@@ -86,25 +94,50 @@ const Snake = () => {
   }, [moverSnake, gameOver, juegoIniciado]);
 
   useEffect(() => {
+    sonidoGameOver.current = new Audio('/sounds/game-over-arcade-6435.mp3');
     const handleKeyDown = (e) => {
       const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
       if (teclas.includes(e.key)) e.preventDefault();
 
+      if (!puedeCambiarDireccionRef.current) return;
+
+      let nuevaDireccion = null;
+
       switch (e.key) {
-        case 'ArrowUp': if (direccion.y !== 1) setDireccion({ x: 0, y: -1 }); break;
-        case 'ArrowDown': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
-        case 'ArrowLeft': if (direccion.x !== 1) setDireccion({ x: -1, y: 0 }); break;
-        case 'ArrowRight': if (direccion.x !== -1) setDireccion({ x: 1, y: 0 }); break;
-        case 'w': if (direccion.y !== 1) setDireccion({ x: 0, y: -1 }); break;
-        case 's': if (direccion.y !== -1) setDireccion({ x: 0, y: 1 }); break;
-        case 'a': if (direccion.x !== 1) setDireccion({ x: -1, y: 0 }); break;
-        case 'd': if (direccion.x !== -1) setDireccion({ x: 1, y: 0 }); break;
-        default: break;
+        case 'ArrowUp':
+        case 'w':
+          if (direccion.y !== 1) nuevaDireccion = { x: 0, y: -1 };
+          break;
+        case 'ArrowDown':
+        case 's':
+          if (direccion.y !== -1) nuevaDireccion = { x: 0, y: 1 };
+          break;
+        case 'ArrowLeft':
+        case 'a':
+          if (direccion.x !== 1) nuevaDireccion = { x: -1, y: 0 };
+          break;
+        case 'ArrowRight':
+        case 'd':
+          if (direccion.x !== -1) nuevaDireccion = { x: 1, y: 0 };
+          break;
+        default:
+          break;
       }
+
+      if (nuevaDireccion) {
+        setDireccion(nuevaDireccion);
+        setPuedeCambiarDireccion(false); // bloquea hasta el próximo movimiento
+      }
+
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [direccion]);
+
+  useEffect(() => {
+  puedeCambiarDireccionRef.current = puedeCambiarDireccion;
+  }, [puedeCambiarDireccion]);
+
 
   const reiniciarJuego = async () => {
     const nombre = prompt("¿Cuál es tu nombre?");
@@ -129,10 +162,12 @@ const Snake = () => {
     setPuntuacion(0);
     setJuegoIniciado(false);
     setMostrarTableroAnimado(false);
+    setAnimacionMuerte(false);
   };
 
   return (
     <div
+      className={`snake-wrapper ${animacionMuerte ? 'muerte-fondo' : ''}`}
       style={{
         outline: 'none',
         display: 'flex',
@@ -151,31 +186,36 @@ const Snake = () => {
         </>
       )}
       <div style={{ position: 'relative', display: 'inline-block' }}>
-      <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''}`}>
-        {[...Array(TAMANO)].map((_, y) =>
-          <div key={y} className="fila">
-            {[...Array(TAMANO)].map((_, x) => {
-              const esCabeza = snake[0].x === x && snake[0].y === y;
-              const esCuerpo = snake.slice(1).some(seg => seg.x === x && seg.y === y);
-              const esComida = comida.x === x && comida.y === y;
-              return (
-                <div key={x} className={
-                  esCabeza ? 'celda cabeza' :
-                  esCuerpo ? 'celda cuerpo' :
-                  esComida ? 'celda comida' :
-                  'celda'
-                } />
-              );
-            })}
-          </div>
-        )}
-      </div>
-            {!juegoIniciado && !gameOver && (
-          <button
+        <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
+          {[...Array(TAMANO)].map((_, y) =>
+            <div key={y} className="fila">
+              {[...Array(TAMANO)].map((_, x) => {
+                const esCabeza = snake[0].x === x && snake[0].y === y;
+                const esCuerpo = snake.slice(1).some(seg => seg.x === x && seg.y === y);
+                const esComida = comida.x === x && comida.y === y;
+                return (
+                  <div key={x} className={
+                    esCabeza ? 'celda cabeza' :
+                      esCuerpo ? 'celda cuerpo' :
+                        esComida ? 'celda comida' :
+                          'celda'
+                  } />
+                );
+              })}
+            </div>
+          )}
+        </div>
+        {!juegoIniciado && !gameOver && (
+          <button className={`btn-play ${ocultandoPlay ? 'fade-out' : ''}`}
             onClick={() => {
-              setJuegoIniciado(true);
-              setMostrarTableroAnimado(true);
-              setTimeout(() => juegoRef.current?.focus(), 10);
+              setOcultandoPlay(true);
+
+              setTimeout(() => {
+                setJuegoIniciado(true);
+                setMostrarTableroAnimado(true);
+                setOcultandoPlay(false);
+                setTimeout(() => juegoRef.current?.focus(), 10);
+              }, 300);
             }}
             style={{
               transition: 'all 0.2s ease',

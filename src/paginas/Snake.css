@@ -13,6 +13,11 @@
   opacity: 1;
 }
 
+.tablero.muerte {
+  transform: scale(0.7);
+  opacity: 0.3;
+}
+
 .fila {
   display: flex;
 }
@@ -54,4 +59,26 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   overflow-x: hidden;
+  padding: 0;
+}
+
+.btn-play {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+.btn-play.fade-out {
+  opacity: 0;
+}
+
+.snake-wrapper.muerte-fondo {
+  animation: parpadeoRojo 0.4s ease-in-out 2;
+}
+
+@keyframes parpadeoRojo {
+  0% { background-color: #000; }
+  25% { background-color: #660000; }
+  50% { background-color: #000; }
+  75% { background-color: #660000; }
+  100% { background-color: #000; }
 }
