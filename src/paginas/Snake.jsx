@@ -105,7 +105,7 @@ const Snake = () => {
   useEffect(() => {
   musicaFondo.current = new Audio('public/sounds/video-game-music-loop-27629.mp3');
   musicaFondo.current.loop = true;
-  musicaFondo.current.volume = 0.3; // volumen bajo para no molestar
+  musicaFondo.current.volume = 0.3;
 
   sonidoComer.current = new Audio('public/sounds/game-start-317318.mp3');
   }, []);
