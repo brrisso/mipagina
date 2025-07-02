@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import './Snake.css';
 import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { p } from 'framer-motion/client';
 
 const TAMANO = 10;
 const COLECCION = "puntuaciones";
@@ -28,6 +29,8 @@ const Snake = () => {
   const [puedeCambiarDireccion, setPuedeCambiarDireccion] = useState(true);
   const puedeCambiarDireccionRef = useRef(true);
   const [nombreJugador, setNombreJugador] = useState("");
+  const [mensajeError, setMensajeError] = useState("");
+
 
   useEffect(() => {
     const obtenerPuntuaciones = async () => {
@@ -152,6 +155,7 @@ const Snake = () => {
       }
     }
 
+
     setSnake([{ x: 5, y: 5 }]);
     setDireccion({ x: 0, y: -1 });
     setComida(generarComida());
@@ -182,28 +186,50 @@ const Snake = () => {
               <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
               <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
 
-              <input 
-                type="text"
-                value={nombreJugador}
-                onChange={(e) => setNombreJugador(e.target.value)}
-                placeholder='Ingresa tu nombre' 
-                style={{
-                marginTop: '1rem',
-                padding: '0.5rem',
-                fontSize: '1rem',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                width: '100%'
-                }}/>
-              <button
-                onClick={() => {
-                  reiniciarJuego(nombreJugador);
-                  setNombreJugador("");
-                }}
-                className="btn-reiniciar"
-                >
-                💾 Guardar y reiniciar
-              </button>
+              {puntuacion>=30 && (
+  <>
+    <input 
+      type="text"
+      value={nombreJugador}
+      onChange={(e) => setNombreJugador(e.target.value)}
+      placeholder='Ingresa tu nombre' 
+      style={{
+        marginTop: '1rem',
+        padding: '0.5rem',
+        fontSize: '1rem',
+        borderRadius: '6px',
+        border: '1px solid #ccc',
+        width: '100%'
+      }}
+    />
+    <button
+      onClick={() => {
+        reiniciarJuego(nombreJugador);
+        setNombreJugador("");
+      }}
+      className="btn-reiniciar"
+    >
+      💾 Guardar y reiniciar
+    </button>
+  </>
+)}
+
+{puntuacion<30 && (
+  <>
+    <p style={{ color: '#ffa500', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+      {"⚠️ No se guardará la puntuación porque es muy baja"}
+    </p>
+    <button
+      onClick={() => {
+        reiniciarJuego(nombreJugador);
+        setNombreJugador("");
+      }}
+      className="btn-reiniciar"
+    >
+      🔁 Reiniciar sin guardar
+    </button>
+  </>
+)}
             </div>
           )}
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
