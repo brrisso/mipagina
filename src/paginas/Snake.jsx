@@ -17,7 +17,6 @@ const Snake = () => {
   const [direccion, setDireccion] = useState({ x: 0, y: -1 });
   const [comida, setComida] = useState(generarComida());
   const [gameOver, setGameOver] = useState(false);
-  const [intentos, setIntentos] = useState(1);
   const [puntuacion, setPuntuacion] = useState(0);
   const [mejoresPuntuaciones, setMejoresPuntuaciones] = useState([]);
   const juegoRef = useRef(null);
@@ -28,7 +27,7 @@ const Snake = () => {
   const sonidoGameOver = useRef(null);
   const [puedeCambiarDireccion, setPuedeCambiarDireccion] = useState(true);
   const puedeCambiarDireccionRef = useRef(true);
-
+  const [nombreJugador, setNombreJugador] = useState("");
 
   useEffect(() => {
     const obtenerPuntuaciones = async () => {
@@ -43,7 +42,7 @@ const Snake = () => {
     };
 
     obtenerPuntuaciones();
-  }, [intentos]);
+  }, []);
 
 
   const generarComidaValida = useCallback((snakeActual) => {
@@ -139,8 +138,7 @@ const Snake = () => {
   }, [puedeCambiarDireccion]);
 
 
-  const reiniciarJuego = async () => {
-    const nombre = prompt("¿Cuál es tu nombre?");
+  const reiniciarJuego = async (nombre) => {
     if (nombre && puntuacion >= 30) {
       try {
         await addDoc(collection(db, COLECCION), {
@@ -158,7 +156,6 @@ const Snake = () => {
     setDireccion({ x: 0, y: -1 });
     setComida(generarComida());
     setGameOver(false);
-    setIntentos(intentos + 1);
     setPuntuacion(0);
     setJuegoIniciado(false);
     setMostrarTableroAnimado(false);
@@ -179,13 +176,36 @@ const Snake = () => {
       }}
     >
       <h2>🐍 Snake Game</h2>
-      {gameOver && (
-        <>
-          <p style={{ color: 'red' }}>💀 ¡Game Over!</p>
-          <p>Has conseguido {puntuacion} puntos!!</p>
-        </>
-      )}
       <div style={{ position: 'relative', display: 'inline-block' }}>
+        {gameOver && (
+            <div className="overlay">
+              <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
+              <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
+
+              <input 
+                type="text"
+                value={nombreJugador}
+                onChange={(e) => setNombreJugador(e.target.value)}
+                placeholder='Ingresa tu nombre' 
+                style={{
+                marginTop: '1rem',
+                padding: '0.5rem',
+                fontSize: '1rem',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+                width: '100%'
+                }}/>
+              <button
+                onClick={() => {
+                  reiniciarJuego(nombreJugador);
+                  setNombreJugador("");
+                }}
+                className="btn-reiniciar"
+                >
+                💾 Guardar y reiniciar
+              </button>
+            </div>
+          )}
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
           {[...Array(TAMANO)].map((_, y) =>
             <div key={y} className="fila">
@@ -235,27 +255,6 @@ const Snake = () => {
             }}
           >
             ▶ Play
-          </button>
-        )}
-      </div>
-      <div>
-        {gameOver && (
-          <button
-            onClick={() => {
-              reiniciarJuego();
-            }}
-            style={{
-              marginTop: '1rem',
-              padding: '0.6rem 1.2rem',
-              fontSize: '1rem',
-              backgroundColor: '#4CAF50',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            🔄 Reiniciar
           </button>
         )}
       </div>
