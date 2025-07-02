@@ -29,8 +29,8 @@ const Snake = () => {
   const [puedeCambiarDireccion, setPuedeCambiarDireccion] = useState(true);
   const puedeCambiarDireccionRef = useRef(true);
   const [nombreJugador, setNombreJugador] = useState("");
-  const [mensajeError, setMensajeError] = useState("");
-
+  const musicaFondo = useRef(null);
+  const sonidoComer = useRef(null);
 
   useEffect(() => {
     const obtenerPuntuaciones = async () => {
@@ -65,6 +65,7 @@ const Snake = () => {
       y: snake[0].y + direccion.y,
     };
 
+    // 💀 Detectar colisión = Game Over
     if (
       nuevaCabeza.x < 0 || nuevaCabeza.x >= TAMANO ||
       nuevaCabeza.y < 0 || nuevaCabeza.y >= TAMANO ||
@@ -73,12 +74,18 @@ const Snake = () => {
       setAnimacionMuerte(true);
       setGameOver(true);
       sonidoGameOver.current?.play();
+
+      // 🛑 Detener la música
+      musicaFondo.current?.pause();
+      musicaFondo.current.currentTime = 0;
+
       return;
     }
 
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
+      sonidoComer.current?.play();
       setComida(generarComidaValida(nuevaSnake));
       setPuntuacion(prev => prev + 1);
     } else {
@@ -94,6 +101,15 @@ const Snake = () => {
     const intervalo = setInterval(moverSnake, 200);
     return () => clearInterval(intervalo);
   }, [moverSnake, gameOver, juegoIniciado]);
+
+  useEffect(() => {
+  musicaFondo.current = new Audio('public/sounds/video-game-music-loop-27629.mp3');
+  musicaFondo.current.loop = true;
+  musicaFondo.current.volume = 0.3; // volumen bajo para no molestar
+
+  sonidoComer.current = new Audio('public/sounds/game-start-317318.mp3');
+  }, []);
+
 
   useEffect(() => {
     sonidoGameOver.current = new Audio('/sounds/game-over-arcade-6435.mp3');
@@ -255,6 +271,7 @@ const Snake = () => {
           <button className={`btn-play ${ocultandoPlay ? 'fade-out' : ''}`}
             onClick={() => {
               setOcultandoPlay(true);
+              musicaFondo.current?.play();
 
               setTimeout(() => {
                 setJuegoIniciado(true);
