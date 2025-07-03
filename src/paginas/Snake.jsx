@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import './Snake.css';
 import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, orderBy, limit } from "firebase/firestore";
-import { p } from 'framer-motion/client';
 
 const TAMANO = 10;
 const COLECCION = "puntuaciones";
@@ -31,6 +30,12 @@ const Snake = () => {
   const [nombreJugador, setNombreJugador] = useState("");
   const musicaFondo = useRef(null);
   const sonidoComer = useRef(null);
+  const [volumen, setVolumen] = useState(0.3);
+  const [mute, setMute] = useState(false);
+  const [ganaste, setGanaste] = useState(false);
+  const [recompensaMostrada, setRecompensaMostrada] = useState(false);
+  const audioRecompensa = useRef(null);
+
 
   useEffect(() => {
     const obtenerPuntuaciones = async () => {
@@ -82,6 +87,15 @@ const Snake = () => {
       return;
     }
 
+    if (snake.length + 1 === TAMANO * TAMANO) {
+      setGameOver(true);
+      setAnimacionMuerte(false);
+      musicaFondo.current?.pause();
+      musicaFondo.current.currentTime = 0;
+      setGanaste(true);
+      return;
+    }
+
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
@@ -103,16 +117,24 @@ const Snake = () => {
   }, [moverSnake, gameOver, juegoIniciado]);
 
   useEffect(() => {
-  musicaFondo.current = new Audio('/sounds/video-game-music-loop-27629.mp3');
-  musicaFondo.current.loop = true;
-  musicaFondo.current.volume = 0.3;
-
-  sonidoComer.current = new Audio('/sounds/game-start-317318.mp3');
+    musicaFondo.current = new Audio('/sounds/video-game-music-loop-27629.mp3');
+    sonidoGameOver.current = new Audio('/sounds/game-over-arcade-6435.mp3');
+    sonidoComer.current = new Audio('/sounds/game-start-317318.mp3');
+    musicaFondo.current.loop = true;
+    musicaFondo.current.volume = volumen;
+    sonidoComer.current.volume = volumen;
+    sonidoGameOver.current.volume = volumen;
   }, []);
 
+  useEffect(() => {
+    const volumenReal = mute ? 0 : volumen;
+
+    if (musicaFondo.current) musicaFondo.current.volume = volumenReal;
+    if (sonidoGameOver.current) sonidoGameOver.current.volume = mute ? 0 : 1;
+    if (sonidoComer.current) sonidoComer.current.volume = mute ? 0 : 1;
+  }, [volumen, mute]);
 
   useEffect(() => {
-    sonidoGameOver.current = new Audio('/sounds/game-over-arcade-6435.mp3');
     const handleKeyDown = (e) => {
       const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
       if (teclas.includes(e.key)) e.preventDefault();
@@ -153,7 +175,7 @@ const Snake = () => {
   }, [direccion]);
 
   useEffect(() => {
-  puedeCambiarDireccionRef.current = puedeCambiarDireccion;
+    puedeCambiarDireccionRef.current = puedeCambiarDireccion;
   }, [puedeCambiarDireccion]);
 
 
@@ -171,7 +193,7 @@ const Snake = () => {
       }
     }
 
-
+    setGanaste(false);
     setSnake([{ x: 5, y: 5 }]);
     setDireccion({ x: 0, y: -1 });
     setComida(generarComida());
@@ -197,57 +219,57 @@ const Snake = () => {
     >
       <h2>🐍 Snake Game</h2>
       <div style={{ position: 'relative', display: 'inline-block' }}>
-        {gameOver && (
-            <div className="overlay">
-              <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
-              <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
+        {gameOver && !ganaste && (
+          <div className="overlay">
+            <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
+            <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
 
-              {puntuacion>=30 && (
-  <>
-    <input 
-      type="text"
-      value={nombreJugador}
-      onChange={(e) => setNombreJugador(e.target.value)}
-      placeholder='Ingresa tu nombre' 
-      style={{
-        marginTop: '1rem',
-        padding: '0.5rem',
-        fontSize: '1rem',
-        borderRadius: '6px',
-        border: '1px solid #ccc',
-        width: '100%'
-      }}
-    />
-    <button
-      onClick={() => {
-        reiniciarJuego(nombreJugador);
-        setNombreJugador("");
-      }}
-      className="btn-reiniciar"
-    >
-      💾 Guardar y reiniciar
-    </button>
-  </>
-)}
+            {puntuacion >= 30 && (
+              <>
+                <input
+                  type="text"
+                  value={nombreJugador}
+                  onChange={(e) => setNombreJugador(e.target.value)}
+                  placeholder='Ingresa tu nombre'
+                  style={{
+                    marginTop: '1rem',
+                    padding: '0.5rem',
+                    fontSize: '1rem',
+                    borderRadius: '6px',
+                    border: '1px solid #ccc',
+                    width: '100%'
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    reiniciarJuego(nombreJugador);
+                    setNombreJugador("");
+                  }}
+                  className="btn-reiniciar"
+                >
+                  💾 Guardar y reiniciar
+                </button>
+              </>
+            )}
 
-{puntuacion<30 && (
-  <>
-    <p style={{ color: '#ffa500', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-      {"⚠️ No se guardará la puntuación porque es muy baja"}
-    </p>
-    <button
-      onClick={() => {
-        reiniciarJuego(nombreJugador);
-        setNombreJugador("");
-      }}
-      className="btn-reiniciar"
-    >
-      🔁 Reiniciar sin guardar
-    </button>
-  </>
-)}
-            </div>
-          )}
+            {puntuacion < 30 && (
+              <>
+                <p style={{ color: '#ffa500', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                  {"⚠️ No se guardará la puntuación porque es muy baja"}
+                </p>
+                <button
+                  onClick={() => {
+                    reiniciarJuego(nombreJugador);
+                    setNombreJugador("");
+                  }}
+                  className="btn-reiniciar"
+                >
+                  🔁 Reiniciar sin guardar
+                </button>
+              </>
+            )}
+          </div>
+        )}
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
           {[...Array(TAMANO)].map((_, y) =>
             <div key={y} className="fila">
@@ -267,6 +289,65 @@ const Snake = () => {
             </div>
           )}
         </div>
+        <div style={{
+          position: 'absolute',
+          top: '0.5rem',
+          left: '0.5rem',
+          background: 'rgba(0,0,0,0.3)',
+          padding: '0.3rem 0.6rem',
+          borderRadius: '8px',
+          zIndex: 10,
+          color: 'white',
+          fontSize: '0.7rem'
+        }}>
+          <label style={{ marginRight: '0.5rem' }}>🎵 Volumen</label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volumen}
+            onChange={(e) => setVolumen(parseFloat(e.target.value))}
+            style={{ verticalAlign: 'middle' }}
+          />
+          <button
+            onClick={() => setMute(!mute)}
+            style={{
+              marginLeft: '0.5rem',
+              background: 'transparent',
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer'
+            }}
+            title={mute ? "Reanudar música" : "Mutear música"}
+          >
+            {mute ? '🔇' : '🔊'}
+          </button>
+        </div>
+        {ganaste && (
+          <div className="recompensa">
+            <p style={{ fontWeight: 'bold', fontSize: '1rem' }}>🎉 ¡Lo lograste! ¡Completaste el juego!</p>
+            {!recompensaMostrada ? (
+              <img
+                src="/images/cofre-cerrado.png"
+                alt="Cofre cerrado"
+                onClick={() => {
+                  setRecompensaMostrada(true);
+                  audioRecompensa.current?.play();
+                }}
+                style={{ cursor: 'pointer', width: '100px', marginTop: '1rem' }}
+              />
+            ) : (
+              <img
+                src="/images/Homero.gif"
+                alt="Cofre abierto"
+                style={{ width: '150px', marginTop: '1rem' }}
+              />
+            )}
+            <audio ref={audioRecompensa} src="/sounds/homero-gimiendo.mp3" />
+          </div>
+        )}
+
         {!juegoIniciado && !gameOver && (
           <button className={`btn-play ${ocultandoPlay ? 'fade-out' : ''}`}
             onClick={() => {

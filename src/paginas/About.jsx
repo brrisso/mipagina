@@ -27,7 +27,7 @@ export default function About() {
         transition={{ delay: 0.4 }}
       >
         Me llamo Bruno Risso, soy ingeniero civil informático de Chile. Me interesa la tecnología, 
-        la creatividad digital, los videojuegos, y el aprendizaje constante. También disfruto compartir 
+        la creatividad, los videojuegos, y el aprendizaje constante. También disfruto compartir 
         contenido en Twitch como Pepethereal. En mi tiempo libre voy al gimnasio, escucho música y 
         busco nuevas ideas para experimentar.
       </motion.p>
