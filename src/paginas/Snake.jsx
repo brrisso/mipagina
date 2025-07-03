@@ -218,13 +218,15 @@ const Snake = () => {
       }}
     >
       <h2>🐍 Snake Game</h2>
-      <div style={{ position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: '#111', // o el color que quieras
-  borderRadius: '8px',
-  boxShadow: '0 0 15px rgba(0,0,0,0.3)',
-  overflow: 'hidden' }}>
+      <div style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#111', // o el color que quieras
+        borderRadius: '8px',
+        boxShadow: '0 0 15px rgba(0,0,0,0.3)',
+        overflow: 'hidden'
+      }}>
         <div
           className="barra-superior-tablero"
           style={{
@@ -270,13 +272,13 @@ const Snake = () => {
         </div>
         {gameOver && !ganaste && (
           <div className="overlay"
-          style={{
-  backgroundColor: 'rgba(0, 0, 0, 0.85)',
-  padding: '1rem',
-  borderRadius: '10px',
-  boxShadow: '0 0 20px rgba(0,0,0,0.5)',
-  backdropFilter: 'blur(2px)',
-}}>
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              padding: '1rem',
+              borderRadius: '10px',
+              boxShadow: '0 0 20px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(2px)',
+            }}>
             <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
             <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
 
@@ -328,7 +330,7 @@ const Snake = () => {
         )}
 
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
-          
+
           {[...Array(TAMANO)].map((_, y) =>
             <div key={y} className="fila">
               {[...Array(TAMANO)].map((_, x) => {
