@@ -270,6 +270,7 @@ const Snake = () => {
             )}
           </div>
         )}
+
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
           {[...Array(TAMANO)].map((_, y) =>
             <div key={y} className="fila">
@@ -286,6 +287,70 @@ const Snake = () => {
                   } />
                 );
               })}
+            </div>
+          )}
+          {ganaste && (
+            <div className="recompensa"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                color: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 20,
+              }}
+            >
+              <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>🎉 ¡Lo lograste! ¡Completaste el juego!</p>
+              {!recompensaMostrada ? (
+                <img
+                  src="/images/cofre-cerrado.png"
+                  alt="Cofre cerrado"
+                  onClick={() => {
+                    setRecompensaMostrada(true);
+                    audioRecompensa.current?.play();
+                  }}
+                  style={{ cursor: 'pointer', width: '100px', marginTop: '1rem' }}
+                />
+              ) : (
+                <img
+                  src="/images/Homero.gif"
+                  alt="Cofre abierto"
+                  style={{ width: '200px', marginTop: '0rem', marginBottom: '2rem' }}
+                />
+              )}
+              <audio ref={audioRecompensa} src="/sounds/homero-gimiendo.mp3" />
+              <button
+                className="btn-play"
+                style={{
+                  marginTop: '1rem',
+                  transition: 'all 0.2s ease',
+                  position: 'absolute',
+                  top: '86%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  padding: '0.8rem 1.5rem',
+                  fontSize: '0.7rem',
+                  backgroundColor: '#a855f7',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  zIndex: 10,
+                  boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+                }}
+                onClick={() => {
+                  reiniciarJuego(nombreJugador);
+                  setRecompensaMostrada(false);
+                }}
+              >
+                🔁 Volver a jugar
+              </button>
             </div>
           )}
         </div>
@@ -324,29 +389,7 @@ const Snake = () => {
             {mute ? '🔇' : '🔊'}
           </button>
         </div>
-        {ganaste && (
-          <div className="recompensa">
-            <p style={{ fontWeight: 'bold', fontSize: '1rem' }}>🎉 ¡Lo lograste! ¡Completaste el juego!</p>
-            {!recompensaMostrada ? (
-              <img
-                src="/images/cofre-cerrado.png"
-                alt="Cofre cerrado"
-                onClick={() => {
-                  setRecompensaMostrada(true);
-                  audioRecompensa.current?.play();
-                }}
-                style={{ cursor: 'pointer', width: '100px', marginTop: '1rem' }}
-              />
-            ) : (
-              <img
-                src="/images/Homero.gif"
-                alt="Cofre abierto"
-                style={{ width: '150px', marginTop: '1rem' }}
-              />
-            )}
-            <audio ref={audioRecompensa} src="/sounds/homero-gimiendo.mp3" />
-          </div>
-        )}
+
 
         {!juegoIniciado && !gameOver && (
           <button className={`btn-play ${ocultandoPlay ? 'fade-out' : ''}`}
