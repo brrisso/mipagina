@@ -130,8 +130,8 @@ const Snake = () => {
     const volumenReal = mute ? 0 : volumen;
 
     if (musicaFondo.current) musicaFondo.current.volume = volumenReal;
-    if (sonidoGameOver.current) sonidoGameOver.current.volume = mute ? 0 : 1;
-    if (sonidoComer.current) sonidoComer.current.volume = mute ? 0 : 1;
+    if (sonidoGameOver.current) sonidoGameOver.current.volume = volumenReal;
+    if (sonidoComer.current) sonidoComer.current.volume = volumenReal;
   }, [volumen, mute]);
 
   useEffect(() => {
@@ -218,9 +218,65 @@ const Snake = () => {
       }}
     >
       <h2>🐍 Snake Game</h2>
-      <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div style={{ position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: '#111', // o el color que quieras
+  borderRadius: '8px',
+  boxShadow: '0 0 15px rgba(0,0,0,0.3)',
+  overflow: 'hidden' }}>
+        <div
+          className="barra-superior-tablero"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: '#1e1e1e',
+            padding: '0.4rem 0.8rem',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            borderBottom: '2px solid #333',
+            color: 'white',
+            fontSize: '0.85rem',
+          }}
+        >
+          <span>⚙️</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label htmlFor="volumen">🎵</label>
+            <input
+              id="volumen"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={volumen}
+              onChange={(e) => setVolumen(parseFloat(e.target.value))}
+              style={{ height: '4px' }}
+            />
+            <button
+              onClick={() => setMute(!mute)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'white',
+                fontSize: '1rem',
+                cursor: 'pointer'
+              }}
+              title={mute ? "Reanudar sonido" : "Mutear"}
+            >
+              {mute ? '🔇' : '🔊'}
+            </button>
+          </div>
+        </div>
         {gameOver && !ganaste && (
-          <div className="overlay">
+          <div className="overlay"
+          style={{
+  backgroundColor: 'rgba(0, 0, 0, 0.85)',
+  padding: '1rem',
+  borderRadius: '10px',
+  boxShadow: '0 0 20px rgba(0,0,0,0.5)',
+  backdropFilter: 'blur(2px)',
+}}>
             <p style={{ color: 'red', fontSize: '1.0rem' }}>💀 ¡Game Over!</p>
             <p style={{ fontWeight: 'bold' }}>Has conseguido {puntuacion} puntos!!</p>
 
@@ -272,6 +328,7 @@ const Snake = () => {
         )}
 
         <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
+          
           {[...Array(TAMANO)].map((_, y) =>
             <div key={y} className="fila">
               {[...Array(TAMANO)].map((_, x) => {
@@ -354,42 +411,6 @@ const Snake = () => {
             </div>
           )}
         </div>
-        <div style={{
-          position: 'absolute',
-          top: '0.5rem',
-          left: '0.5rem',
-          background: 'rgba(0,0,0,0.3)',
-          padding: '0.3rem 0.6rem',
-          borderRadius: '8px',
-          zIndex: 10,
-          color: 'white',
-          fontSize: '0.7rem'
-        }}>
-          <label style={{ marginRight: '0.5rem' }}>🎵 Volumen</label>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volumen}
-            onChange={(e) => setVolumen(parseFloat(e.target.value))}
-            style={{ verticalAlign: 'middle' }}
-          />
-          <button
-            onClick={() => setMute(!mute)}
-            style={{
-              marginLeft: '0.5rem',
-              background: 'transparent',
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer'
-            }}
-            title={mute ? "Reanudar música" : "Mutear música"}
-          >
-            {mute ? '🔇' : '🔊'}
-          </button>
-        </div>
-
 
         {!juegoIniciado && !gameOver && (
           <button className={`btn-play ${ocultandoPlay ? 'fade-out' : ''}`}
