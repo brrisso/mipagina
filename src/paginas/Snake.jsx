@@ -103,11 +103,11 @@ const Snake = () => {
   }, [moverSnake, gameOver, juegoIniciado]);
 
   useEffect(() => {
-  musicaFondo.current = new Audio('public/sounds/video-game-music-loop-27629.mp3');
+  musicaFondo.current = new Audio('/sounds/video-game-music-loop-27629.mp3');
   musicaFondo.current.loop = true;
   musicaFondo.current.volume = 0.3;
 
-  sonidoComer.current = new Audio('public/sounds/game-start-317318.mp3');
+  sonidoComer.current = new Audio('/sounds/game-start-317318.mp3');
   }, []);
 
 
