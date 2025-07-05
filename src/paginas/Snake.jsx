@@ -36,8 +36,10 @@ const Snake = () => {
   const [recompensaMostrada, setRecompensaMostrada] = useState(false);
   const audioRecompensa = useRef(null);
   const intervaloRef = useRef(200);
-  //const [tick, setTick] = useState(0);
-  //const calcularNivel = () => Math.floor((200 - intervaloRef.current) / 10) + 1;
+  const colaDirecciones = useRef([]);
+  const direccionRef = useRef({ x: 0, y: -1 });
+const juegoIniciadoRef = useRef(false);
+
 
 
   useEffect(() => {
@@ -68,10 +70,20 @@ const Snake = () => {
   }, []);
 
   const moverSnake = useCallback(() => {
+    const siguiente = colaDirecciones.current.shift();
+  if (siguiente) {
+  const opuesta = direccionRef.current.x === -siguiente.x && direccionRef.current.y === -siguiente.y;
+  if (!opuesta) {
+    direccionRef.current = siguiente;
+    setDireccion(siguiente);
+  }
+}
+
     const nuevaCabeza = {
-      x: snake[0].x + direccion.x,
-      y: snake[0].y + direccion.y,
-    };
+  x: snake[0].x + direccionRef.current.x,
+  y: snake[0].y + direccionRef.current.y,
+};
+
 
     // 💀 Detectar colisión = Game Over
     if (
@@ -115,7 +127,7 @@ const Snake = () => {
     }
 
     setSnake(nuevaSnake);
-    setPuedeCambiarDireccion(true);
+    //setPuedeCambiarDireccion(true);
   }, [snake, direccion, comida, generarComidaValida]);
 
   useEffect(() => {
@@ -143,8 +155,14 @@ const Snake = () => {
   }, [volumen, mute]);
 
   useEffect(() => {
+  juegoIniciadoRef.current = juegoIniciado;
+  }, [juegoIniciado]);
+
+
+  useEffect(() => {
     const handleKeyDown = (e) => {
-      const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+      if(!juegoIniciadoRef.current) return;
+      const teclas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'];
       if (teclas.includes(e.key)) e.preventDefault();
 
       if (!puedeCambiarDireccionRef.current) return;
@@ -152,40 +170,39 @@ const Snake = () => {
       let nuevaDireccion = null;
 
       switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-          if (direccion.y !== 1) nuevaDireccion = { x: 0, y: -1 };
-          break;
-        case 'ArrowDown':
-        case 's':
-          if (direccion.y !== -1) nuevaDireccion = { x: 0, y: 1 };
-          break;
-        case 'ArrowLeft':
-        case 'a':
-          if (direccion.x !== 1) nuevaDireccion = { x: -1, y: 0 };
-          break;
-        case 'ArrowRight':
-        case 'd':
-          if (direccion.x !== -1) nuevaDireccion = { x: 1, y: 0 };
-          break;
-        default:
-          break;
-      }
+      case 'ArrowUp':
+      case 'w':
+        nuevaDireccion = { x: 0, y: -1 };
+        break;
+      case 'ArrowDown':
+      case 's':
+        nuevaDireccion = { x: 0, y: 1 };
+        break;
+      case 'ArrowLeft':
+      case 'a':
+        nuevaDireccion = { x: -1, y: 0 };
+        break;
+      case 'ArrowRight':
+      case 'd':
+        nuevaDireccion = { x: 1, y: 0 };
+        break;
+      default:
+        break;
+    }
 
       if (nuevaDireccion) {
-        setDireccion(nuevaDireccion);
-        setPuedeCambiarDireccion(false); // bloquea hasta el próximo movimiento
+        colaDirecciones.current.push(nuevaDireccion);
+        //setPuedeCambiarDireccion(false); // bloquea hasta el próximo movimiento
       }
 
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [direccion]);
+  }, []);
 
   useEffect(() => {
-    puedeCambiarDireccionRef.current = puedeCambiarDireccion;
-  }, [puedeCambiarDireccion]);
-
+  direccionRef.current = direccion;
+}, [direccion]);
 
   const reiniciarJuego = async (nombre) => {
     if (nombre && puntuacion >= 30) {
