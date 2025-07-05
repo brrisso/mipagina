@@ -35,6 +35,9 @@ const Snake = () => {
   const [ganaste, setGanaste] = useState(false);
   const [recompensaMostrada, setRecompensaMostrada] = useState(false);
   const audioRecompensa = useRef(null);
+  const intervaloRef = useRef(150);
+  const [tick, setTick] = useState(0);
+  const calcularNivel = () => Math.floor((150 - intervaloRef.current) / 10) + 1;
 
 
   useEffect(() => {
@@ -101,6 +104,8 @@ const Snake = () => {
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
       sonidoComer.current?.play();
       setComida(generarComidaValida(nuevaSnake));
+      // Acelera el juego (pero no menos de 60ms)
+      intervaloRef.current = Math.max(60, intervaloRef.current - 1);
       setPuntuacion(prev => prev + 1);
     } else {
       nuevaSnake.pop();
@@ -112,9 +117,9 @@ const Snake = () => {
 
   useEffect(() => {
     if (gameOver || !juegoIniciado) return;
-    const intervalo = setInterval(moverSnake, 200);
+    const intervalo = setInterval(moverSnake, intervaloRef.current);
     return () => clearInterval(intervalo);
-  }, [moverSnake, gameOver, juegoIniciado]);
+  }, [moverSnake, gameOver, juegoIniciado, tick]);
 
   useEffect(() => {
     musicaFondo.current = new Audio('/sounds/video-game-music-loop-27629.mp3');
@@ -202,6 +207,7 @@ const Snake = () => {
     setJuegoIniciado(false);
     setMostrarTableroAnimado(false);
     setAnimacionMuerte(false);
+    intervaloRef.current = 150;
   };
 
   return (
@@ -225,7 +231,9 @@ const Snake = () => {
         backgroundColor: '#111', // o el color que quieras
         borderRadius: '8px',
         boxShadow: '0 0 15px rgba(0,0,0,0.3)',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        margin: 'auto',
+        width: 'min(90vw, 320px)', // se adapta al ancho de pantalla pero con máximo
       }}>
         <div
           className="barra-superior-tablero"
@@ -242,7 +250,12 @@ const Snake = () => {
             fontSize: '0.85rem',
           }}
         >
-          <span>⚙️</span>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <span style={{ minWidth: '100px', display: 'inline-block', fontWeight: 'bold', color: '#a855f7' }}>
+              🏅 Puntos: {puntuacion}
+            </span>
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <label htmlFor="volumen">🎵</label>
             <input
@@ -329,25 +342,30 @@ const Snake = () => {
           </div>
         )}
 
-        <div className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}>
+        <div
+          className={`tablero ${mostrarTableroAnimado ? 'animado' : ''} ${animacionMuerte ? 'muerte' : ''}`}
+        >
+          {[...Array(TAMANO * TAMANO)].map((_, index) => {
+            const x = index % TAMANO;
+            const y = Math.floor(index / TAMANO);
+            const esCabeza = snake[0].x === x && snake[0].y === y;
+            const esCuerpo = snake.slice(1).some(seg => seg.x === x && seg.y === y);
+            const esComida = comida.x === x && comida.y === y;
 
-          {[...Array(TAMANO)].map((_, y) =>
-            <div key={y} className="fila">
-              {[...Array(TAMANO)].map((_, x) => {
-                const esCabeza = snake[0].x === x && snake[0].y === y;
-                const esCuerpo = snake.slice(1).some(seg => seg.x === x && seg.y === y);
-                const esComida = comida.x === x && comida.y === y;
-                return (
-                  <div key={x} className={
-                    esCabeza ? 'celda cabeza' :
-                      esCuerpo ? 'celda cuerpo' :
-                        esComida ? 'celda comida' :
-                          'celda'
-                  } />
-                );
-              })}
-            </div>
-          )}
+            return (
+              <div
+                key={index}
+                className={
+                  esCabeza ? 'celda cabeza' :
+                    esCuerpo ? 'celda cuerpo' :
+                      esComida ? 'celda comida' :
+                        'celda'
+                }
+              />
+            );
+          })}
+
+
           {ganaste && (
             <div className="recompensa"
               style={{
