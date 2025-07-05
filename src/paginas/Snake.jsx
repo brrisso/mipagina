@@ -35,9 +35,9 @@ const Snake = () => {
   const [ganaste, setGanaste] = useState(false);
   const [recompensaMostrada, setRecompensaMostrada] = useState(false);
   const audioRecompensa = useRef(null);
-  const intervaloRef = useRef(150);
-  const [tick, setTick] = useState(0);
-  const calcularNivel = () => Math.floor((150 - intervaloRef.current) / 10) + 1;
+  const intervaloRef = useRef(200);
+  //const [tick, setTick] = useState(0);
+  //const calcularNivel = () => Math.floor((200 - intervaloRef.current) / 10) + 1;
 
 
   useEffect(() => {
@@ -102,10 +102,13 @@ const Snake = () => {
     let nuevaSnake = [nuevaCabeza, ...snake];
 
     if (nuevaCabeza.x === comida.x && nuevaCabeza.y === comida.y) {
-      sonidoComer.current?.play();
+      if (sonidoComer.current) {
+        sonidoComer.current.currentTime = 0;
+        sonidoComer.current.play();
+      }
       setComida(generarComidaValida(nuevaSnake));
       // Acelera el juego (pero no menos de 60ms)
-      intervaloRef.current = Math.max(60, intervaloRef.current - 1);
+      intervaloRef.current = Math.max(60, intervaloRef.current - 2);
       setPuntuacion(prev => prev + 1);
     } else {
       nuevaSnake.pop();
@@ -119,7 +122,7 @@ const Snake = () => {
     if (gameOver || !juegoIniciado) return;
     const intervalo = setInterval(moverSnake, intervaloRef.current);
     return () => clearInterval(intervalo);
-  }, [moverSnake, gameOver, juegoIniciado, tick]);
+  }, [moverSnake, gameOver, juegoIniciado]);
 
   useEffect(() => {
     musicaFondo.current = new Audio('/sounds/video-game-music-loop-27629.mp3');
@@ -207,7 +210,7 @@ const Snake = () => {
     setJuegoIniciado(false);
     setMostrarTableroAnimado(false);
     setAnimacionMuerte(false);
-    intervaloRef.current = 150;
+    intervaloRef.current = 200;
   };
 
   return (
@@ -228,7 +231,7 @@ const Snake = () => {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#111', // o el color que quieras
+        backgroundColor: '#111',
         borderRadius: '8px',
         boxShadow: '0 0 15px rgba(0,0,0,0.3)',
         overflow: 'hidden',
@@ -364,7 +367,6 @@ const Snake = () => {
               />
             );
           })}
-
 
           {ganaste && (
             <div className="recompensa"
