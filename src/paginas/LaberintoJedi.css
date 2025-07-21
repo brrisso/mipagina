@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: black;
+  /*background: black;*/
   touch-action: manipulation;
   overflow-x: hidden;
   overflow-y: auto; /* ✅ permite scroll vertical si es necesario */

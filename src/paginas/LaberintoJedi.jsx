@@ -99,14 +99,15 @@ export default function LaberintoJedi() {
          display: 'flex',
          flexDirection: 'column',
          alignItems: 'center',
-         justifyContent: 'start',
+         justifyContent: 'center',
+         width: '100%',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${mapaInicial[0].length}, 1fr)`,
+            gridTemplateColumns: `repeat(${mapaInicial[0].length}, 20px)`,
             transform: 'scale(var(--zoom, 1))',
             transformOrigin: 'top center',
             gap: '2px',
