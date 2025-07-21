@@ -6,7 +6,7 @@ function Layout({ children }) {
   return (
     <>
       <Navbar />
-      <main style={{ padding: '20px', minHeight: '80vh' }}>{children}</main>
+      <main style={{ paddingTop: '80px' }}>{children}</main>
       <Footer />
     </>
   );

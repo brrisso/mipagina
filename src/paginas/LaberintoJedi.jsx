@@ -90,7 +90,7 @@ export default function LaberintoJedi() {
     <div
       style={{
         background: 'black',
-        Height: '100dvh',
+        minHeight: 'calc(100vh - 80px)',
         color: 'yellow',
         fontFamily: 'monospace',
         padding: '10px 0 0 0',
@@ -98,6 +98,7 @@ export default function LaberintoJedi() {
         //overflowY: 'auto',
          display: 'flex',
          flexDirection: 'column',
+         alignItems: 'center',
          justifyContent: 'start',
       }}
     >
