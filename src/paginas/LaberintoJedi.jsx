@@ -100,7 +100,6 @@ export default function LaberintoJedi() {
     alignItems: 'center',
     width: '100%',
     boxSizing: 'border-box',
-    overflowX: 'hidden',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
@@ -113,7 +112,6 @@ export default function LaberintoJedi() {
     transformOrigin: 'top center',
     gap: '2px',
     maxWidth: '100vw',
-    overflow: 'hidden',
           }}
         >
           {mapaInicial.flatMap((fila, y) =>
