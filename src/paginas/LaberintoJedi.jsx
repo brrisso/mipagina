@@ -146,22 +146,31 @@ export default function LaberintoJedi() {
 
       {/* CONTROLES DE MOVIMIENTO */}
       <div
-        style={{
-          marginTop: '8px',
-          touchAction: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '6px',
-        }}
-      >
-        <button onClick={() => mover(0, -1)}>↑</button>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => mover(-1, 0)}>←</button>
-          <button onClick={() => mover(1, 0)}>→</button>
-        </div>
-        <button onClick={() => mover(0, 1)}>↓</button>
-      </div>
+  style={{
+    position: 'fixed',
+    bottom: 20,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    backgroundColor: '#000',
+    padding: '10px 20px',
+    borderRadius: '12px',
+    boxShadow: '0 0 10px #ffe81f88',
+    zIndex: 99,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '6px',
+    touchAction: 'none',
+  }}
+>
+  <button onClick={() => mover(0, -1)}>↑</button>
+  <div style={{ display: 'flex', gap: '10px' }}>
+    <button onClick={() => mover(-1, 0)}>←</button>
+    <button onClick={() => mover(1, 0)}>→</button>
+  </div>
+  <button onClick={() => mover(0, 1)}>↓</button>
+</div>
+
       {/* PREGUNTA */}
       {mostrarPregunta && (
         <motion.div
