@@ -145,31 +145,33 @@ export default function LaberintoJedi() {
           <div style={{ flexGrow: 1 }} />
 
       {/* CONTROLES DE MOVIMIENTO */}
-      <div
+     <div
   style={{
     position: 'fixed',
-    bottom: 20,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: '#000',
-    padding: '10px 20px',
-    borderRadius: '12px',
-    boxShadow: '0 0 10px #ffe81f88',
+    bottom: 10,
+    right: 10,
+    backgroundColor: '#111',
+    border: '1px solid #444',
+    borderRadius: '10px',
+    padding: '6px',
     zIndex: 99,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '6px',
-    touchAction: 'none',
+    display: 'grid',
+    gridTemplateAreas: `
+      ". up ."
+      "left . right"
+      ". down ."
+    `,
+    gap: '4px',
+    width: '96px',
   }}
 >
-  <button onClick={() => mover(0, -1)}>↑</button>
-  <div style={{ display: 'flex', gap: '10px' }}>
-    <button onClick={() => mover(-1, 0)}>←</button>
-    <button onClick={() => mover(1, 0)}>→</button>
-  </div>
-  <button onClick={() => mover(0, 1)}>↓</button>
+  <button style={{ gridArea: 'up' }} onClick={() => mover(0, -1)}>↑</button>
+  <button style={{ gridArea: 'left' }} onClick={() => mover(-1, 0)}>←</button>
+  <button style={{ gridArea: 'right' }} onClick={() => mover(1, 0)}>→</button>
+  <button style={{ gridArea: 'down' }} onClick={() => mover(0, 1)}>↓</button>
 </div>
+
+
 
       {/* PREGUNTA */}
       {mostrarPregunta && (

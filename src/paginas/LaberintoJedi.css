@@ -104,3 +104,19 @@ html, #root, .App {
   color: #66ff99;
   font-weight: bold;
 }
+button {
+  background-color: #222;
+  color: #ffe81f;
+  border: none;
+  font-size: 1rem;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: #ffe81f;
+  color: #000;
+}
+
+
