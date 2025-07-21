@@ -98,6 +98,7 @@ export default function LaberintoJedi() {
         //overflowY: 'auto',
          display: 'flex',
          flexDirection: 'column',
+         justifyContent: 'start',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
