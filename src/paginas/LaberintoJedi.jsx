@@ -10,7 +10,7 @@ const mapaInicial = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
   [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
   [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-  [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
   [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
   [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
   [1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
@@ -29,7 +29,7 @@ const mapaInicial = [
 ];
 
 const droidePregunta = {
-  x: 4,
+  x: 5,
   y: 5,
   pregunta: "¿Cuál es el color del sable de Mace Windu?",
   opciones: ["Rojo", "Azul", "Púrpura", "Verde"],
@@ -37,7 +37,7 @@ const droidePregunta = {
 };
 
 export default function LaberintoJedi() {
-  const [pos, setPos] = useState({ x: 1, y: 1 });
+  const [pos, setPos] = useState({ x: 1, y: 0 });
   const [bloqueado, setBloqueado] = useState(true);
   const [mostrarPregunta, setMostrarPregunta] = useState(false);
   const [mensaje, setMensaje] = useState("");
@@ -93,23 +93,23 @@ export default function LaberintoJedi() {
         minHeight: '100vh',
         color: 'yellow',
         fontFamily: 'monospace',
-        padding: '20px',
+        padding: '10px 0 0 0',
         textAlign: 'center',
-        overflowY: 'auto',
+        //overflowY: 'auto',
         paddingBottom: '0px',
       }}
     >
-      <h1 style={{ fontSize: '2rem', marginBottom: '0px' }}>Laberinto Jedi</h1>
+      <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
 
       {/* CONTENEDOR SCROLLEABLE */}
-      <div
+      {/*<div
         style={{
           overflowX: 'auto',
           width: '100%',
           margin: '0 auto',
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px'
         }}
-      >
+      >*/}
         <div
           style={{
             display: 'grid',
@@ -153,12 +153,12 @@ export default function LaberintoJedi() {
       {/* CONTROLES DE MOVIMIENTO */}
       <div
         style={{
-          marginTop: '0px',
+          marginTop: '8px',
           touchAction: 'none',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '10px',
+          gap: '6px',
         }}
       >
         <button onClick={() => mover(0, -1)}>↑</button>
@@ -168,7 +168,7 @@ export default function LaberintoJedi() {
         </div>
         <button onClick={() => mover(0, 1)}>↓</button>
       </div>
-     </div>
+     {/*</div>*/}
       {/* PREGUNTA */}
       {mostrarPregunta && (
         <motion.div
