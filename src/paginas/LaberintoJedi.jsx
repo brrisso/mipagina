@@ -48,8 +48,8 @@ export default function LaberintoJedi() {
       const alto = window.innerHeight;
       const columnas = mapaInicial[0].length;
       const filas = mapaInicial.length;
-      const zoomX = ancho / (columnas * 30);
-      const zoomY = (alto - 120) / (filas * 20); 
+      const zoomX = ancho / (columnas * 22);
+      const zoomY = (alto - 120) / (filas * 22); 
       const zoom = Math.min(zoomX, zoomY, 1); 
       document.documentElement.style.setProperty('--zoom', zoom);
     };
@@ -90,29 +90,31 @@ export default function LaberintoJedi() {
     <div
       style={{
         background: 'black',
-        minHeight: 'calc(100vh - 80px)',
-        color: 'yellow',
-        fontFamily: 'monospace',
-        padding: '10px 0 0 0',
-        textAlign: 'center',
-        //overflowY: 'auto',
-         display: 'flex',
-         flexDirection: 'column',
-         alignItems: 'center',
-         justifyContent: 'center',
-         width: '100%',
+    minHeight: 'calc(100vh - 80px)',
+    color: 'yellow',
+    fontFamily: 'monospace',
+    paddingTop: '10px',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    boxSizing: 'border-box',
+    overflowX: 'hidden',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
         <div
+          id="laberinto-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${mapaInicial[0].length}, 20px)`,
-            transform: 'scale(var(--zoom, 1))',
-            transformOrigin: 'top center',
-            gap: '2px',
+    gridTemplateColumns: `repeat(${mapaInicial[0].length}, 20px)`,
+    transform: 'scale(var(--zoom, 1))',
+    transformOrigin: 'top center',
+    gap: '2px',
+    maxWidth: '100vw',
+    overflow: 'hidden',
           }}
-          id="laberinto-grid"
         >
           {mapaInicial.flatMap((fila, y) =>
             fila.map((celda, x) => (
