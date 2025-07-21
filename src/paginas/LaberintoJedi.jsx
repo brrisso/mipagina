@@ -50,7 +50,7 @@ export default function LaberintoJedi() {
       const filas = mapaInicial.length;
       const zoomX = ancho / (columnas * 22);
       const zoomY = (alto - 120) / (filas * 22); 
-      const zoom = Math.min(zoomX, zoomY, 1); 
+      const zoom = Math.min(zoomX, zoomY, 0.95); 
       document.documentElement.style.setProperty('--zoom', zoom);
     };
 
@@ -100,6 +100,8 @@ export default function LaberintoJedi() {
     alignItems: 'center',
     width: '100%',
     boxSizing: 'border-box',
+     overflowX: 'auto',
+    padding: '8px 0',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
@@ -109,9 +111,10 @@ export default function LaberintoJedi() {
             display: 'grid',
     gridTemplateColumns: `repeat(${mapaInicial[0].length}, 20px)`,
     transform: 'scale(var(--zoom, 1))',
-    transformOrigin: 'top center',
+    transformOrigin: 'top left',
     gap: '2px',
-    maxWidth: '100vw',
+    Width: 'fit-content',
+    margin: '0 auto',
           }}
         >
           {mapaInicial.flatMap((fila, y) =>
