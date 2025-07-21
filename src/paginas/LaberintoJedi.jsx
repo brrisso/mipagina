@@ -71,7 +71,7 @@ export default function LaberintoJedi() {
     }
   };
 
-  if (pos.x === 6 && pos.y === 7) {
+  if (pos.x === 19 && pos.y === 20) {
     return <FinalLaberinto />;
   }
 
