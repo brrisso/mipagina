@@ -7,6 +7,8 @@ import Contacto from './paginas/Contacto';
 import Blog from './paginas/Blog';
 import Layout from './componentes/Layout';
 import Snake from './paginas/Snake';
+import LaberintoJedi from './paginas/LaberintoJedi';
+import FinalLaberinto from './paginas/FinalLaberinto';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/snake" element={<Snake />} />
+          <Route path="/LaberintoJedi" element={<LaberintoJedi/>}/>
+          <Route path="/FinalLaberinto" element={<FinalLaberinto/>}/>
         </Routes>
       </Layout>
     </Router>

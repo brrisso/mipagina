@@ -1,0 +1,106 @@
+body {
+  margin: 0;
+  background: black;
+  touch-action: manipulation;
+  overflow-x: hidden;
+  overflow-y: auto; /* ✅ permite scroll vertical si es necesario */
+}
+
+html, #root, .App {
+  min-height: 100dvh; /* ✅ altura dinámica según pantalla */
+  overflow-x: hidden;
+  overflow-y: auto;   /* ✅ ahora permite ver controles en móviles */
+}
+
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .mensaje-holograma p {
+    font-size: 1rem;
+  }
+}
+
+
+.laberinto {
+  padding: 20px;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.mapa {
+  display: grid;
+  grid-template-columns: repeat(6, 40px);
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.celda {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1px solid #222;
+}
+
+.muro {
+  background-color: #333;
+}
+
+.camino {
+  background-color: #111;
+}
+
+.jugador {
+  background-color: #00ff00;
+}
+
+.controles button {
+  background-color: #111;
+  color: #ffe81f;
+  border: 2px solid #ffe81f;
+  padding: 8px 12px;
+  margin: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.controles button:hover {
+  background-color: #ffe81f;
+  color: #000;
+}
+
+.pregunta {
+  background-color: #222;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.opciones button {
+  display: block;
+  background-color: #444;
+  color: #fff;
+  border: none;
+  margin: 6px auto;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.opciones button:hover {
+  background-color: #ffe81f;
+  color: #000;
+}
+
+.mensaje {
+  margin-top: 15px;
+  color: #66ff99;
+  font-weight: bold;
+}
