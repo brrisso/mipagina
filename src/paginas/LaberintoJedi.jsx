@@ -96,7 +96,8 @@ export default function LaberintoJedi() {
         padding: '10px 0 0 0',
         textAlign: 'center',
         //overflowY: 'auto',
-        paddingBottom: '0px',
+         display: 'flex',
+         flexDirection: 'column',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
@@ -138,7 +139,7 @@ export default function LaberintoJedi() {
             ))
           )}
         </div>
-     
+          <div style={{ flexGrow: 1 }} />
 
       {/* CONTROLES DE MOVIMIENTO */}
       <div
