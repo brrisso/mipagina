@@ -107,11 +107,9 @@ export default function LaberintoJedi() {
           style={{
             display: 'grid',
             gridTemplateColumns: `repeat(${mapaInicial[0].length}, 1fr)`,
-            width: 'fit-content',
             transform: 'scale(var(--zoom, 1))',
             transformOrigin: 'top center',
             gap: '2px',
-            margin: '0 auto',
           }}
           id="laberinto-grid"
         >
