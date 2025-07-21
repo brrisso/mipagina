@@ -90,7 +90,7 @@ export default function LaberintoJedi() {
     <div
       style={{
         background: 'black',
-        minHeight: '100vh',
+        Height: '100dvh',
         color: 'yellow',
         fontFamily: 'monospace',
         padding: '10px 0 0 0',
@@ -100,16 +100,6 @@ export default function LaberintoJedi() {
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
-
-      {/* CONTENEDOR SCROLLEABLE */}
-      {/*<div
-        style={{
-          overflowX: 'auto',
-          width: '100%',
-          margin: '0 auto',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px'
-        }}
-      >*/}
         <div
           style={{
             display: 'grid',
@@ -168,7 +158,6 @@ export default function LaberintoJedi() {
         </div>
         <button onClick={() => mover(0, 1)}>↓</button>
       </div>
-     {/*</div>*/}
       {/* PREGUNTA */}
       {mostrarPregunta && (
         <motion.div
