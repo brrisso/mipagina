@@ -224,37 +224,38 @@ export default function LaberintoJedi() {
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
             }}
-          ></div>
-          <p style={{ marginBottom: '12px' }}>{droidePregunta.pregunta}</p>
-          {droidePregunta.opciones.map((op, i) => (
-            <button
-              key={i}
-              style={{
-                display: 'block',
-                margin: '10px auto',
-                padding: '10px 15px',
-                background: 'transparent',
-                color: '#00ffff',
-                border: '2px solid #00ffff',
-                borderRadius: '6px',
-                fontFamily: 'monospace',
-                cursor: 'pointer',
-                boxShadow: '0 0 6px #00ffff88',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = '#00ffff22';
-                e.target.style.color = '#fff';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = 'transparent';
-                e.target.style.color = '#00ffff';
-              }}
-              onClick={() => responder(op)}
-            >
-              {op}
-            </button>
-          ))}
+          >
+            <p style={{ marginBottom: '12px' }}>{droidePregunta.pregunta}</p>
+            {droidePregunta.opciones.map((op, i) => (
+              <button
+                key={i}
+                style={{
+                  display: 'block',
+                  margin: '10px auto',
+                  padding: '10px 15px',
+                  background: 'transparent',
+                  color: '#00ffff',
+                  border: '2px solid #00ffff',
+                  borderRadius: '6px',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 6px #00ffff88',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = '#00ffff22';
+                  e.target.style.color = '#fff';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#00ffff';
+                }}
+                onClick={() => responder(op)}
+              >
+                {op}
+              </button>
+            ))}
+          </div>
         </motion.div>
       )}
 
