@@ -106,6 +106,7 @@ export default function LaberintoJedi() {
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
         <div
+
           id="laberinto-grid"
           style={{
             display: 'grid',
@@ -130,8 +131,8 @@ export default function LaberintoJedi() {
                         : celda === 1
                           ? '#333'
                           : '#555',
-                  width: '20px',
-                  height: '20px',
+                  width: '18px',
+                  height: '18px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
