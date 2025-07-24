@@ -5,6 +5,7 @@ import FinalLaberinto from './FinalLaberinto';
 import { useEffect } from 'react';
 const sonidoError = new Audio('/sonidos/error.mp3');
 const sonidoCorrect = new Audio('/sonidos/correctAnswer.mp3');
+const sonidoCheckpoint = new Audio('/sonidos/checkpoint.mp3');
 
 const mapaInicial = [
   [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -31,48 +32,48 @@ const mapaInicial = [
 ];
 
 const preguntas = [
-{
-  x: 5,
-  y: 5,
-  pregunta: "¿Cuál es el color del sable de Mace Windu?",
-  opciones: ["Rojo", "Azul", "Púrpura", "Verde"],
-  correcta: "Púrpura",
-  id: 1
-},
-{
+  {
+    x: 5,
+    y: 5,
+    pregunta: "¿Cuál es el color del sable de Mace Windu?",
+    opciones: ["Rojo", "Azul", "Púrpura", "Verde"],
+    correcta: "Púrpura",
+    id: 1
+  },
+  {
     x: 11,
     y: 8,
     pregunta: "¿Quién entrenó a Luke Skywalker?",
     opciones: ["Mace Windu", "Obi-Wan", "Yoda", "Qui-Gon"],
     correcta: "Yoda",
     id: 2
-},
- {
-    id: 5,
-    x: 13,
-    y: 10,
+  },
+  {
+    id: 3,
+    x: 10,
+    y: 11,
     pregunta: "¿Cómo se llama el planeta natal de Chewbacca?",
     opciones: ["Naboo", "Endor", "Kashyyyk", "Tatooine"],
     correcta: "Kashyyyk"
   },
   {
-    id: 7,
-    x: 4,
+    id: 4,
+    x: 5,
     y: 18,
     pregunta: "¿Qué especie es Yoda?",
     opciones: ["Desconocida", "Togruta", "Rodiano", "Kaminoano"],
     correcta: "Desconocida"
   },
   {
-    id: 12,
+    id: 5,
     x: 14,
-    y: 6,
+    y: 7,
     pregunta: "¿Qué planeta fue destruido por la Estrella de la Muerte en 'Una Nueva Esperanza'?",
     opciones: ["Alderaan", "Yavin 4", "Scarif", "Corellia"],
     correcta: "Alderaan"
   },
   {
-    id: 14,
+    id: 6,
     x: 3,
     y: 15,
     pregunta: "¿Cuál es el nombre del mineral necesario para construir sables de luz?",
@@ -80,21 +81,53 @@ const preguntas = [
     correcta: "Kyber"
   },
   {
-    id: 15,
-    x: 18,
+    id: 7,
+    x: 19,
     y: 11,
     pregunta: "¿Qué planeta alberga el templo Jedi en la trilogía original?",
     opciones: ["Coruscant", "Dagobah", "Yavin 4", "Ahch-To"],
     correcta: "Yavin 4"
   },
   {
-    id: 20,
+    id: 8,
     x: 17,
     y: 6,
     pregunta: "¿Qué planeta es el origen del ejército clon?",
     opciones: ["Kamino", "Geonosis", "Naboo", "Mustafar"],
     correcta: "Kamino"
-  }
+  },
+  {
+    id: 9,
+    x: 5,
+    y: 13,
+    pregunta: "¿Qué senador propuso otorgar poderes de emergencia a Palpatine?",
+    opciones: ["Mon Mothma", "Bail Organa", "Jar Jar Binks", "Mas Amedda"],
+    correcta: "Jar Jar Binks"
+  },
+  {
+    id: 10,
+    x: 8,
+    y: 17,
+    pregunta: "¿Cuál es el nombre real de Darth Sidious?",
+    opciones: ["Sheev Palpatine", "Sifo-Dyas", "Wilhuff Tarkin", "Dooku"],
+    correcta: "Sheev Palpatine"
+  },
+  {
+    id: 11,
+    x: 18,
+    y: 17,
+    pregunta: "¿Qué planeta sirve de escondite para Yoda tras la Orden 66?",
+    opciones: ["Naboo", "Dagobah", "Endor", "Dantooine"],
+    correcta: "Dagobah"
+  },
+  {
+    id: 12,
+    x: 15,
+    y: 15,
+    pregunta: "¿Qué le promete Darth Vader al Emperador sobre Luke?",
+    opciones: ["Convertirlo al Lado Oscuro", "Destruirlo", "Capturarlo", "Usarlo como espía"],
+    correcta: "Convertirlo al Lado Oscuro"
+  },
 ];
 
 export default function LaberintoJedi() {
@@ -105,7 +138,17 @@ export default function LaberintoJedi() {
   const [errorAnim, setErrorAnim] = useState(false);
   const [droidePregunta, setDroidePregunta] = useState(null);
   const [preguntasRespondidas, setPreguntasRespondidas] = useState([]);
+  const [checkpoint, setCheckpoint] = useState({ x: 1, y: 0 }); // el inicial
+  const [checkpointGuardado, setCheckpointGuardado] = useState(false);
 
+
+  const checkpoints = [
+    { x: 11, y: 3 },
+    { x: 15, y: 5 },
+    { x: 1, y: 9 },
+    { x: 13, y: 17 },
+    // puedes agregar más
+  ];
 
   useEffect(() => {
     const calcularZoom = () => {
@@ -130,11 +173,19 @@ export default function LaberintoJedi() {
     if (mapaInicial[nuevoY][nuevoX] === 0) {
       const pregunta = preguntas.find(o => o.x === nuevoX && o.y === nuevoY && !preguntasRespondidas.includes(o.id));
       if (pregunta && !preguntasRespondidas.includes(pregunta.id)) {
-      setMostrarPregunta(true);
-      setDroidePregunta(pregunta);
-    } else if (!(bloqueado && pregunta)) {
-      setPos({ x: nuevoX, y: nuevoY });
-    }
+        setMostrarPregunta(true);
+        setDroidePregunta(pregunta);
+      } else if (!(bloqueado && pregunta)) {
+        setPos({ x: nuevoX, y: nuevoY });
+        // Revisa si es un checkpoint
+        sonidoCheckpoint.play();
+        if (checkpoints.some(c => c.x === nuevoX && c.y === nuevoY)) {
+          sonidoCheckpoint.play();
+          setCheckpoint({ x: nuevoX, y: nuevoY });
+          setCheckpointGuardado(true);
+          setTimeout(() => setCheckpointGuardado(false), 2000);
+        }
+      }
     }
   };
 
@@ -166,7 +217,7 @@ export default function LaberintoJedi() {
       setTimeout(() => {
         setMensaje("");
         setMostrarPregunta(false);
-        setPos({ x: 1, y: 0}); //vuelve al inicio
+        setPos(checkpoint);
         setDroidePregunta(null);
         setTimeout(() => setErrorAnim(false), 500);
       }, 1000);
@@ -241,6 +292,7 @@ export default function LaberintoJedi() {
               }}
             >
               {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
+              {checkpoints.some(c => c.x === x && c.y === y) ? '🔵' : ''}
 
             </div>
           ))
@@ -360,7 +412,30 @@ export default function LaberintoJedi() {
                 {mensaje}
               </p>
             )}
+
           </div>
+        </motion.div>
+      )}
+      {checkpointGuardado && (
+        <motion.div
+          initial={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 0, y: -50 }}
+          transition={{ duration: 2 }}
+          style={{
+            position: 'absolute',
+            top: '60px',
+            zIndex: 1000,
+            background: '#111',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            color: '#00ffcc',
+            fontSize: '1.2rem',
+            fontFamily: 'monospace',
+            border: '1px solid #00ffcc',
+            boxShadow: '0 0 8px #00ffcc88',
+          }}
+        >
+          ✔ Checkpoint guardado
         </motion.div>
       )}
     </div>
