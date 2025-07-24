@@ -255,24 +255,24 @@ export default function LaberintoJedi() {
                 {op}
               </button>
             ))}
+
+
+            {mensaje && (
+              <p
+                style={{
+                  marginTop: '12px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  color: mensaje.includes('✔') ? '#00ff88' : '#ff5555',
+                  textShadow: '0 0 4px currentColor',
+                }}
+              >
+                {mensaje}
+              </p>
+            )}
           </div>
         </motion.div>
       )}
-
-      {mensaje && (
-        <p
-          style={{
-            marginTop: '12px',
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            color: mensaje.includes('✔') ? '#00ff88' : '#ff5555',
-            textShadow: '0 0 4px currentColor',
-          }}
-        >
-          {mensaje}
-        </p>
-      )}
-
     </div>
   );
 }
