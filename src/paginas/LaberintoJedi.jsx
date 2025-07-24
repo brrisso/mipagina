@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import './LaberintoJedi.css';
 import FinalLaberinto from './FinalLaberinto';
 import { useEffect } from 'react';
+const sonidoError = new Audio('/sonidos/error.mp3');
+const sonidoCorrect = new Audio('/sonidos/correctAnswer.mp3');
 
 const mapaInicial = [
   [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -28,19 +30,82 @@ const mapaInicial = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
 ];
 
-const droidePregunta = {
+const preguntas = [
+{
   x: 5,
   y: 5,
   pregunta: "¿Cuál es el color del sable de Mace Windu?",
   opciones: ["Rojo", "Azul", "Púrpura", "Verde"],
   correcta: "Púrpura",
-};
+  id: 1
+},
+{
+    x: 11,
+    y: 8,
+    pregunta: "¿Quién entrenó a Luke Skywalker?",
+    opciones: ["Mace Windu", "Obi-Wan", "Yoda", "Qui-Gon"],
+    correcta: "Yoda",
+    id: 2
+},
+ {
+    id: 5,
+    x: 13,
+    y: 10,
+    pregunta: "¿Cómo se llama el planeta natal de Chewbacca?",
+    opciones: ["Naboo", "Endor", "Kashyyyk", "Tatooine"],
+    correcta: "Kashyyyk"
+  },
+  {
+    id: 7,
+    x: 4,
+    y: 18,
+    pregunta: "¿Qué especie es Yoda?",
+    opciones: ["Desconocida", "Togruta", "Rodiano", "Kaminoano"],
+    correcta: "Desconocida"
+  },
+  {
+    id: 12,
+    x: 14,
+    y: 6,
+    pregunta: "¿Qué planeta fue destruido por la Estrella de la Muerte en 'Una Nueva Esperanza'?",
+    opciones: ["Alderaan", "Yavin 4", "Scarif", "Corellia"],
+    correcta: "Alderaan"
+  },
+  {
+    id: 14,
+    x: 3,
+    y: 15,
+    pregunta: "¿Cuál es el nombre del mineral necesario para construir sables de luz?",
+    opciones: ["Beskar", "Kyber", "Durasteel", "Baryon"],
+    correcta: "Kyber"
+  },
+  {
+    id: 15,
+    x: 18,
+    y: 11,
+    pregunta: "¿Qué planeta alberga el templo Jedi en la trilogía original?",
+    opciones: ["Coruscant", "Dagobah", "Yavin 4", "Ahch-To"],
+    correcta: "Yavin 4"
+  },
+  {
+    id: 20,
+    x: 17,
+    y: 6,
+    pregunta: "¿Qué planeta es el origen del ejército clon?",
+    opciones: ["Kamino", "Geonosis", "Naboo", "Mustafar"],
+    correcta: "Kamino"
+  }
+];
 
 export default function LaberintoJedi() {
   const [pos, setPos] = useState({ x: 1, y: 0 });
   const [bloqueado, setBloqueado] = useState(true);
   const [mostrarPregunta, setMostrarPregunta] = useState(false);
   const [mensaje, setMensaje] = useState("");
+  const [errorAnim, setErrorAnim] = useState(false);
+  const [droidePregunta, setDroidePregunta] = useState(null);
+  const [preguntasRespondidas, setPreguntasRespondidas] = useState([]);
+
 
   useEffect(() => {
     const calcularZoom = () => {
@@ -63,11 +128,13 @@ export default function LaberintoJedi() {
     const nuevoX = pos.x + dx;
     const nuevoY = pos.y + dy;
     if (mapaInicial[nuevoY][nuevoX] === 0) {
-      if (nuevoX === droidePregunta.x && nuevoY === droidePregunta.y && bloqueado) {
-        setMostrarPregunta(true);
-      } else if (!(bloqueado && nuevoX === droidePregunta.x && nuevoY === droidePregunta.y)) {
-        setPos({ x: nuevoX, y: nuevoY });
-      }
+      const pregunta = preguntas.find(o => o.x === nuevoX && o.y === nuevoY && !preguntasRespondidas.includes(o.id));
+      if (pregunta && !preguntasRespondidas.includes(pregunta.id)) {
+      setMostrarPregunta(true);
+      setDroidePregunta(pregunta);
+    } else if (!(bloqueado && pregunta)) {
+      setPos({ x: nuevoX, y: nuevoY });
+    }
     }
   };
 
@@ -76,13 +143,33 @@ export default function LaberintoJedi() {
   }
 
   const responder = (opcion) => {
+    if (!droidePregunta) return;
     if (opcion === droidePregunta.correcta) {
+      sonidoCorrect.play();
       setBloqueado(false);
       setMensaje("✔ Acceso concedido");
-      setMostrarPregunta(false);
-      setPos({ x: droidePregunta.x, y: droidePregunta.y });
+      setPreguntasRespondidas((prev) => [...prev, droidePregunta.id]);
+
+      // Espera 1.5 segundos antes de cerrar el modal y mover al jugador
+      setTimeout(() => {
+        setMostrarPregunta(false);
+        setPos({ x: droidePregunta.x, y: droidePregunta.y });
+        setMensaje(""); // Limpia el mensaje
+        setDroidePregunta(null);
+      }, 1000);
     } else {
+      sonidoError.play();
       setMensaje("✖ Respuesta incorrecta");
+      setBloqueado(true);
+      setErrorAnim(true);
+      // Opcional: borrar el mensaje luego de unos segundos
+      setTimeout(() => {
+        setMensaje("");
+        setMostrarPregunta(false);
+        setPos({ x: 1, y: 0}); //vuelve al inicio
+        setDroidePregunta(null);
+        setTimeout(() => setErrorAnim(false), 500);
+      }, 1000);
     }
   };
 
@@ -135,7 +222,8 @@ export default function LaberintoJedi() {
                     boxShadow: '0 0 6px 2px lime',
                     animation: 'pulse 1.5s ease-in-out infinite',
                   }
-                  : droidePregunta.x === x && droidePregunta.y === y && bloqueado
+                  : droidePregunta && droidePregunta.x === x && droidePregunta.y === y && bloqueado
+
                     ? {
                       background: 'radial-gradient(circle, crimson 50%, darkred 100%)',
                       boxShadow: '0 0 4px 2px crimson',
@@ -152,7 +240,8 @@ export default function LaberintoJedi() {
                       }),
               }}
             >
-              {droidePregunta.x === x && droidePregunta.y === y && bloqueado ? '🤖' : ''}
+              {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
+
             </div>
           ))
         )}
@@ -223,6 +312,7 @@ export default function LaberintoJedi() {
               gap: '10px',
               wordWrap: 'break-word',
               overflowWrap: 'break-word',
+              animation: errorAnim ? 'shake 0.5s' : 'none',
             }}
           >
             <p style={{ marginBottom: '12px' }}>{droidePregunta.pregunta}</p>
