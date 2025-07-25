@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import './LaberintoJedi.css';
 import FinalLaberinto from './FinalLaberinto';
 import { useEffect } from 'react';
-const sonidoError = new Audio('/sonidos/error.mp3');
-const sonidoCorrect = new Audio('/sonidos/correctAnswer.mp3');
-const sonidoCheckpoint = new Audio('/sonidos/checkpoint.mp3');
+const sonidoError = new Audio('/sounds/error.mp3');
+const sonidoCorrect = new Audio('/sounds/correctAnswer.mp3');
+const sonidoCheckpoint = new Audio('/sounds/checkpoint.mp3');
 
 const mapaInicial = [
   [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -178,7 +178,6 @@ export default function LaberintoJedi() {
       } else if (!(bloqueado && pregunta)) {
         setPos({ x: nuevoX, y: nuevoY });
         // Revisa si es un checkpoint
-        sonidoCheckpoint.play();
         if (checkpoints.some(c => c.x === nuevoX && c.y === nuevoY)) {
           sonidoCheckpoint.play();
           setCheckpoint({ x: nuevoX, y: nuevoY });
