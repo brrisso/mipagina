@@ -12,20 +12,20 @@ export default function PuertaFinal() {
     const timeout = setTimeout(() => {
       setAbierto(true);
       audioRef.current.play();
-    setReproduciendo(true);
-    audioRef.current.onended = () => setReproduciendo(false);
+      setReproduciendo(true);
+      audioRef.current.onended = () => setReproduciendo(false);
 
     }, 1500);
     return () => clearTimeout(timeout);
   }, []);
 
   const repetirAudio = () => {
-  if (audioRef.current) {
-    audioRef.current.currentTime = 0;
-    audioRef.current.play();
-    setReproduciendo(true);
-  }
-};
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+      setReproduciendo(true);
+    }
+  };
 
 
   return (
@@ -60,16 +60,24 @@ export default function PuertaFinal() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1 }}
         >
-          <p className="aurebesh">
-            𝓑𝓾𝓼𝓬𝓪 𝓭𝓮𝓷𝓽𝓻𝓸 𝓭𝓮 𝓵𝓪 𝓬𝓪𝓳𝓪 𝓭𝓮 𝓶𝓮𝓭𝓲𝓬𝓲𝓷𝓪...
+          <p className="aurebesh" style={{
+            fontFamily: 'Aurebesh',
+            color: '#00ffff',
+            fontSize: '2rem',
+            textShadow: '0 0 6px #00ffff, 0 0 10px #00ffff88',
+            marginTop: '20px',
+            animation: 'aurebeshFade 3s ease-in-out',
+          }}>
+            Busca en la mesa del comedor
           </p>
+
           {reproduciendo && (
-  <div className="ondas-sonido">
-    <div className="onda" />
-    <div className="onda" />
-    <div className="onda" />
-  </div>
-)}
+            <div className="ondas-sonido">
+              <div className="onda" />
+              <div className="onda" />
+              <div className="onda" />
+            </div>
+          )}
 
           <button onClick={repetirAudio} style={{
             marginTop: '20px',
