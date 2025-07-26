@@ -140,7 +140,8 @@ export default function LaberintoJedi() {
   const [preguntasRespondidas, setPreguntasRespondidas] = useState([]);
   const [checkpoint, setCheckpoint] = useState({ x: 1, y: 0 }); // el inicial
   const [checkpointGuardado, setCheckpointGuardado] = useState(false);
-
+  const [activarPared, setActivarPared] = useState(false);
+  const [activarPared2, setActivarPared2] = useState(false);
 
   const checkpoints = [
     { x: 11, y: 3 },
@@ -170,6 +171,23 @@ export default function LaberintoJedi() {
   const mover = (dx, dy) => {
     const nuevoX = pos.x + dx;
     const nuevoY = pos.y + dy;
+
+    // 📍 Activar obstáculo dinámico en (3, 6)
+    if (nuevoX === 3 && nuevoY === 6 && !activarPared) {
+      setActivarPared(true);
+      // Convierte la celda en pared (1)
+      mapaInicial[6][3] = 1;
+      return; // No dejar pasar por ahí en el mismo movimiento
+    }
+
+    if (nuevoX === 7 && nuevoY === 18 && !activarPared2)
+    {
+       setActivarPared2(true);
+       mapaInicial[18][7] = 1;
+       mapaInicial[19][6] = 0;
+       return; 
+    }
+
     if (mapaInicial[nuevoY][nuevoX] === 0) {
       const pregunta = preguntas.find(o => o.x === nuevoX && o.y === nuevoY && !preguntasRespondidas.includes(o.id));
       if (pregunta && !preguntasRespondidas.includes(pregunta.id)) {
@@ -239,6 +257,7 @@ export default function LaberintoJedi() {
         boxSizing: 'border-box',
         overflowX: 'auto',
         padding: '8px 0',
+        position: 'relative',
       }}
     >
       <h1 style={{ fontSize: '1.5rem', margin: '10px 0 0 0' }}>Laberinto Jedi</h1>
@@ -255,6 +274,28 @@ export default function LaberintoJedi() {
           margin: '0 auto',
         }}
       >
+        {checkpointGuardado && (
+          <motion.div
+            initial={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0, y: -60 }}
+            transition={{ duration: 2 }}
+            style={{
+              position: 'absolute',
+              top: '60px',
+              zIndex: 1000,
+              background: '#111',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              color: '#00ffcc',
+              fontSize: '1.2rem',
+              fontFamily: 'monospace',
+              border: '1px solid #00ffcc',
+              boxShadow: '0 0 8px #00ffcc88',
+            }}
+          >
+            ✔ Checkpoint guardado
+          </motion.div>
+        )}
         {mapaInicial.flatMap((fila, y) =>
           fila.map((celda, x) => (
             <div
@@ -266,6 +307,18 @@ export default function LaberintoJedi() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: '1px solid #111',
+                ...(activarPared && x === 3 && y === 6
+                  ? {
+                    backgroundColor: '#200',
+                    animation: 'cerrar-obstaculo 0.6s ease-in-out',
+                    boxShadow: '0 0 10px 3px darkred'
+                  } : {}),
+                  ...(activarPared2 && x === 7 && y === 18
+                  ? {
+                    backgroundColor: '#200',
+                    animation: 'cerrar-obstaculo 0.6s ease-in-out',
+                    boxShadow: '0 0 10px 3px darkred'
+                  } : {}),
                 ...(pos.x === x && pos.y === y
                   ? {
                     background: 'radial-gradient(circle, lime 40%, #0f0 70%, transparent 100%)',
@@ -289,6 +342,7 @@ export default function LaberintoJedi() {
                         background: 'radial-gradient(circle at center, #555 0%, #222 100%)',
                       }),
               }}
+
             >
               {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
               {checkpoints.some(c => c.x === x && c.y === y) ? '🔵' : ''}
@@ -415,28 +469,7 @@ export default function LaberintoJedi() {
           </div>
         </motion.div>
       )}
-      {checkpointGuardado && (
-        <motion.div
-          initial={{ opacity: 1, y: 0 }}
-          animate={{ opacity: 0, y: -50 }}
-          transition={{ duration: 2 }}
-          style={{
-            position: 'absolute',
-            top: '60px',
-            zIndex: 1000,
-            background: '#111',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            color: '#00ffcc',
-            fontSize: '1.2rem',
-            fontFamily: 'monospace',
-            border: '1px solid #00ffcc',
-            boxShadow: '0 0 8px #00ffcc88',
-          }}
-        >
-          ✔ Checkpoint guardado
-        </motion.div>
-      )}
+
     </div>
   );
 }
