@@ -143,3 +143,37 @@ button:active {
   100% { transform: translateX(0); }
 }
 
+@keyframes cerrar-obstaculo {
+  0% {
+    transform: scale(1);
+    background-color: #600;
+    box-shadow: 0 0 6px 2px red;
+  }
+  100% {
+    transform: scale(1.1);
+    background-color: #200;
+    box-shadow: 0 0 10px 3px darkred;
+  }
+}
+
+.alerta-emperador {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: red;
+  padding: 20px 25px;
+  border: 2px solid crimson;
+  font-family: monospace;
+  font-size: 1.2rem;
+  animation: aparecerYSubir 2s ease-out forwards;
+  z-index: 999;
+  box-shadow: 0 0 8px red;
+}
+
+@keyframes aparecerYSubir {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  30% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+}

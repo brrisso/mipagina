@@ -130,6 +130,15 @@ const preguntas = [
   },
 ];
 
+const areaVigilada = [
+  { x: 19, y: 3 },
+  { x: 19, y: 4 },
+  { x: 19, y: 5 },
+  { x: 19, y: 6 },
+  { x: 19, y: 7 },
+  { x: 19, y: 8 },
+];
+
 export default function LaberintoJedi() {
   const [pos, setPos] = useState({ x: 1, y: 0 });
   const [bloqueado, setBloqueado] = useState(true);
@@ -142,14 +151,25 @@ export default function LaberintoJedi() {
   const [checkpointGuardado, setCheckpointGuardado] = useState(false);
   const [activarPared, setActivarPared] = useState(false);
   const [activarPared2, setActivarPared2] = useState(false);
+  const [emperadorObservando, setEmperadorObservando] = useState(false);
+  const [mensajeVigilancia, setMensajeVigilancia] = useState(false);
+
 
   const checkpoints = [
     { x: 11, y: 3 },
     { x: 15, y: 5 },
     { x: 1, y: 9 },
     { x: 13, y: 17 },
-    // puedes agregar más
   ];
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setEmperadorObservando(prev => !prev);
+    }, 3000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
 
   useEffect(() => {
     const calcularZoom = () => {
@@ -172,6 +192,17 @@ export default function LaberintoJedi() {
     const nuevoX = pos.x + dx;
     const nuevoY = pos.y + dy;
 
+    const enZona = areaVigilada.some(c => c.x === nuevoX && c.y === nuevoY);
+    if (enZona && emperadorObservando) {
+      sonidoError.play();
+      setErrorAnim(true);
+      setTimeout(() => {
+        setPos(checkpoint);
+        setErrorAnim(false);
+      }, 800);
+      return;
+    }
+
     // 📍 Activar obstáculo dinámico en (3, 6)
     if (nuevoX === 3 && nuevoY === 6 && !activarPared) {
       setActivarPared(true);
@@ -180,12 +211,11 @@ export default function LaberintoJedi() {
       return; // No dejar pasar por ahí en el mismo movimiento
     }
 
-    if (nuevoX === 7 && nuevoY === 18 && !activarPared2)
-    {
-       setActivarPared2(true);
-       mapaInicial[18][7] = 1;
-       mapaInicial[19][6] = 0;
-       return; 
+    if (nuevoX === 7 && nuevoY === 18 && !activarPared2) {
+      setActivarPared2(true);
+      mapaInicial[18][7] = 1;
+      mapaInicial[19][6] = 0;
+      return;
     }
 
     if (mapaInicial[nuevoY][nuevoX] === 0) {
@@ -297,41 +327,57 @@ export default function LaberintoJedi() {
           </motion.div>
         )}
         {mapaInicial.flatMap((fila, y) =>
-          fila.map((celda, x) => (
-            <div
-              key={`${x}-${y}`}
-              style={{
-                width: '18px',
-                height: '18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid #111',
-                ...(activarPared && x === 3 && y === 6
-                  ? {
-                    backgroundColor: '#200',
-                    animation: 'cerrar-obstaculo 0.6s ease-in-out',
-                    boxShadow: '0 0 10px 3px darkred'
-                  } : {}),
-                  ...(activarPared2 && x === 7 && y === 18
-                  ? {
-                    backgroundColor: '#200',
-                    animation: 'cerrar-obstaculo 0.6s ease-in-out',
-                    boxShadow: '0 0 10px 3px darkred'
-                  } : {}),
-                ...(pos.x === x && pos.y === y
-                  ? {
-                    background: 'radial-gradient(circle, lime 40%, #0f0 70%, transparent 100%)',
-                    boxShadow: '0 0 6px 2px lime',
-                    animation: 'pulse 1.5s ease-in-out infinite',
-                  }
-                  : droidePregunta && droidePregunta.x === x && droidePregunta.y === y && bloqueado
+          fila.map((celda, x) => {
+            const esZonaVigilada = areaVigilada.some(c => c.x === x && c.y === y);
+            const estaObservando = emperadorObservando && esZonaVigilada;
 
-                    ? {
-                      background: 'radial-gradient(circle, crimson 50%, darkred 100%)',
-                      boxShadow: '0 0 4px 2px crimson',
-                      animation: 'parpadeo 1s infinite alternate',
-                    }
+            const styleBase = {
+              width: '18px',
+              height: '18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #111',
+            };
+
+            const styleFinal = {
+              ...styleBase,
+              ...(activarPared && x === 3 && y === 6
+                ? {
+                  backgroundColor: '#200',
+                  animation: 'cerrar-obstaculo 0.6s ease-in-out',
+                  boxShadow: '0 0 10px 3px darkred'
+                }
+                : {}),
+              ...(activarPared2 && x === 7 && y === 18
+                ? {
+                  backgroundColor: '#200',
+                  animation: 'cerrar-obstaculo 0.6s ease-in-out',
+                  boxShadow: '0 0 10px 3px darkred'
+                }
+                : {}),
+              ...(pos.x === x && pos.y === y
+                ? {
+                  background: 'radial-gradient(circle, lime 40%, #0f0 70%, transparent 100%)',
+                  boxShadow: '0 0 6px 2px lime',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                }
+                : droidePregunta && droidePregunta.x === x && droidePregunta.y === y && bloqueado
+                  ? {
+                    background: 'radial-gradient(circle, crimson 50%, darkred 100%)',
+                    boxShadow: '0 0 4px 2px crimson',
+                    animation: 'parpadeo 1s infinite alternate',
+                  }
+                  : esZonaVigilada
+                    ? estaObservando
+                      ? {
+                        background: 'radial-gradient(circle, #800000 20%, #400000 100%)',
+                        boxShadow: '0 0 5px 2px red',
+                        animation: 'parpadeo 1s infinite alternate',
+                      }
+                      : {
+                        background: 'radial-gradient(circle at center, #555 0%, #222 100%)',
+                      }
                     : celda === 1
                       ? {
                         background: 'repeating-linear-gradient(to bottom, #2a2a2a 0px, #2a2a2a 2px, #1c1c1c 2px, #1c1c1c 4px)',
@@ -341,14 +387,34 @@ export default function LaberintoJedi() {
                       : {
                         background: 'radial-gradient(circle at center, #555 0%, #222 100%)',
                       }),
-              }}
+            };
 
-            >
-              {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
-              {checkpoints.some(c => c.x === x && c.y === y) ? '🔵' : ''}
-
-            </div>
-          ))
+            return (
+              <div key={`${x}-${y}`} style={styleFinal}>
+                {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
+                {checkpoints.some(c => c.x === x && c.y === y) ? '🔵' : ''}
+                {/* 👁️ DROIDE DE VIGILANCIA en posición 18,6 */}
+                {(x === 18 && y === 6) && (
+                  <motion.div
+                    animate={{ rotate: emperadorObservando ? 0 : 180 }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                      fontSize: '16px',
+                      transformOrigin: 'center',
+                      filter: emperadorObservando ? 'drop-shadow(0 0 4px red)' : 'drop-shadow(0 0 2px gray)',
+                    }}
+                  >
+                    🎥
+                  </motion.div>
+                )}
+              </div>
+            );
+          })
+        )}
+        {mensajeVigilancia && (
+          <div className="alerta-emperador">
+            ¡El Emperador te ha visto!
+          </div>
         )}
       </div>
       <div style={{ flexGrow: 1 }} />
