@@ -153,6 +153,12 @@ export default function LaberintoJedi() {
   const [activarPared2, setActivarPared2] = useState(false);
   const [emperadorObservando, setEmperadorObservando] = useState(false);
   const [mensajeVigilancia, setMensajeVigilancia] = useState(false);
+  const [mostrarReflejos, setMostrarReflejos] = useState(false);
+const [falloReflejos, setFalloReflejos] = useState(false);
+const [reflejosProgreso, setReflejosProgreso] = useState(100); // porcentaje de barra
+const [reflejosActivo, setReflejosActivo] = useState(false);
+const [reflejosResultado, setReflejosResultado] = useState(null);
+const [intervaloReflejos, setIntervaloReflejos] = useState(null);
 
 
   const checkpoints = [
@@ -188,6 +194,50 @@ export default function LaberintoJedi() {
     return () => window.removeEventListener('resize', calcularZoom);
   }, []);
 
+  useEffect(() => {
+  if (reflejosResultado === 'exito') {
+    setReflejosResultado(null);
+    setPos({ x: 4, y: 4 }); // deja avanzar
+  }
+
+  if (reflejosResultado === 'fallo') {
+    setReflejosResultado(null);
+    setTimeout(() => {
+      setPos(checkpoint);
+      setErrorAnim(true);
+      setTimeout(() => setErrorAnim(false), 800);
+    }, 500);
+  }
+}, [reflejosResultado]);
+
+
+  const iniciarReflejos = () => {
+  setReflejosActivo(true);
+  setReflejosProgreso(100);
+  setReflejosResultado(null);
+
+  const intervalo = setInterval(() => {
+    setReflejosProgreso(prev => {
+      if (prev <= 0) {
+        clearInterval(intervalo);
+        setReflejosActivo(false);
+        setReflejosResultado('fallo');
+        sonidoError.play();
+        setTimeout(() => setFalloReflejos(true), 300);
+        return 0;
+      }
+      return prev - 2;
+    });
+  }, 100); // cada 100ms baja 2%
+  setIntervaloReflejos(intervalo);
+};
+
+const manejarClickReflejo = () => {
+  if (intervaloReflejos) clearInterval(intervaloReflejos);
+  setReflejosActivo(false);
+  setReflejosResultado('exito');
+  sonidoCorrect.play();
+};
   const mover = (dx, dy) => {
     const nuevoX = pos.x + dx;
     const nuevoY = pos.y + dy;
@@ -202,6 +252,13 @@ export default function LaberintoJedi() {
       }, 800);
       return;
     }
+
+    if (nuevoX === 4 && nuevoY === 3 && !reflejosActivo && reflejosResultado !== 'exito') {
+  iniciarReflejos();
+  return;
+}
+
+  if (reflejosResultado === 'fallo') return;
 
     // 📍 Activar obstáculo dinámico en (3, 6)
     if (nuevoX === 3 && nuevoY === 6 && !activarPared) {
@@ -408,6 +465,7 @@ export default function LaberintoJedi() {
                   </motion.div>
                 )}
               </div>
+              
             );
           })
         )}
@@ -535,7 +593,64 @@ export default function LaberintoJedi() {
           </div>
         </motion.div>
       )}
+    {reflejosActivo && (
+  <motion.div
+    style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      background: '#111',
+      border: '2px solid #00ffff',
+      borderRadius: '10px',
+      padding: '20px',
+      zIndex: 9999,
+      width: '300px',
+      textAlign: 'center',
+      fontFamily: 'monospace',
+      boxShadow: '0 0 12px #00ffffaa',
+    }}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+  >
+    <p>¡Presiona el botón antes que la barra llegue a cero!</p>
+    <div
+      style={{
+        margin: '10px 0',
+        height: '20px',
+        background: '#333',
+        border: '1px solid #555',
+        borderRadius: '8px',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          width: `${reflejosProgreso}%`,
+          height: '100%',
+          background: reflejosProgreso > 30 ? '#00ff00' : '#ff0000',
+          transition: 'width 0.1s linear',
+        }}
+      />
+    </div>
+    <button
+      onClick={manejarClickReflejo}
+      style={{
+        padding: '10px 20px',
+        background: '#00ffff22',
+        border: '1px solid #00ffff',
+        color: '#00ffff',
+        borderRadius: '6px',
+        marginTop: '10px',
+        cursor: 'pointer',
+      }}
+    >
+      Click
+    </button>
+  </motion.div>
+)}
 
     </div>
+
   );
 }
