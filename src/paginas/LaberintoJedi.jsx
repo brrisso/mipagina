@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import './LaberintoJedi.css';
 import FinalLaberinto from './FinalLaberinto';
-import { useEffect } from 'react';
 const sonidoError = new Audio('/sounds/error.mp3');
 const sonidoCorrect = new Audio('/sounds/correctAnswer.mp3');
 const sonidoCheckpoint = new Audio('/sounds/checkpoint.mp3');
@@ -152,20 +151,29 @@ export default function LaberintoJedi() {
   const [activarPared, setActivarPared] = useState(false);
   const [activarPared2, setActivarPared2] = useState(false);
   const [emperadorObservando, setEmperadorObservando] = useState(false);
-  const [mensajeVigilancia, setMensajeVigilancia] = useState(false);
-  const [mostrarReflejos, setMostrarReflejos] = useState(false);
-const [falloReflejos, setFalloReflejos] = useState(false);
-const [reflejosProgreso, setReflejosProgreso] = useState(100); // porcentaje de barra
-const [reflejosActivo, setReflejosActivo] = useState(false);
-const [reflejosResultado, setReflejosResultado] = useState(null);
-const [intervaloReflejos, setIntervaloReflejos] = useState(null);
+  const [reflejosProgreso, setReflejosProgreso] = useState(100); // porcentaje de barra
+  const [reflejosActivo, setReflejosActivo] = useState(false);
+  const [reflejosResultado, setReflejosResultado] = useState(null);
+  const [intervaloReflejos, setIntervaloReflejos] = useState(null);
+  const [minijuegosReflejos, setMinijuegosReflejos] = useState({
+    '4-3': false,
+    '7-9': false,
+    '17-11': false,
+    '15-19': false,
+    '1-16': false,
+  });
+  const [reflejosActivoClave, setReflejosActivoClave] = useState(null);
+  const [tieneLlave, setTieneLlave] = useState(false);
 
+  const llavePos = { x: 15, y: 11 };
+  const puertaPos = { x: 19, y: 19 };
 
   const checkpoints = [
     { x: 11, y: 3 },
     { x: 15, y: 5 },
     { x: 1, y: 9 },
     { x: 13, y: 17 },
+    { x: 11, y: 13 },
   ];
 
   useEffect(() => {
@@ -194,53 +202,79 @@ const [intervaloReflejos, setIntervaloReflejos] = useState(null);
     return () => window.removeEventListener('resize', calcularZoom);
   }, []);
 
+  // 🔓 Abrir la puerta si se obtiene la llave
   useEffect(() => {
-  if (reflejosResultado === 'exito') {
+    if (tieneLlave) {
+      mapaInicial[puertaPos.y][puertaPos.x] = 0; // Convierte la puerta en camino
+    }
+  }, [tieneLlave]);
+
+
+  useEffect(() => {
+    if (reflejosResultado === 'exito' && reflejosActivoClave) {
+      setReflejosResultado(null);
+      setMinijuegosReflejos(prev => ({
+        ...prev,
+        [reflejosActivoClave]: true,
+      }));
+      setReflejosActivoClave(null);
+    }
+
+
+    if (reflejosResultado === 'fallo') {
+      setReflejosResultado(null);
+      setTimeout(() => {
+        setPos(checkpoint);
+        setErrorAnim(true);
+        setTimeout(() => setErrorAnim(false), 800);
+      }, 500);
+    }
+  }, [reflejosResultado]);
+
+
+  const iniciarReflejos = (clave) => {
+    setReflejosActivo(true);
+    setReflejosProgreso(100);
     setReflejosResultado(null);
-    setPos({ x: 4, y: 4 }); // deja avanzar
-  }
 
-  if (reflejosResultado === 'fallo') {
-    setReflejosResultado(null);
-    setTimeout(() => {
-      setPos(checkpoint);
-      setErrorAnim(true);
-      setTimeout(() => setErrorAnim(false), 800);
-    }, 500);
-  }
-}, [reflejosResultado]);
+    const intervalo = setInterval(() => {
+      setReflejosProgreso(prev => {
+        if (prev <= 0) {
+          clearInterval(intervalo);
+          setReflejosActivo(false);
+          setReflejosResultado('fallo');
+          sonidoError.play();
+          setTimeout(() => setFalloReflejos(true), 300);
+          return 0;
+        }
+        return prev - 4;
+      });
+    }, 50);
+
+    setIntervaloReflejos(intervalo);
+
+    // Guardar la clave activa para luego marcarla como completada
+    setReflejosActivoClave(clave); // debes crear este estado
+  };
 
 
-  const iniciarReflejos = () => {
-  setReflejosActivo(true);
-  setReflejosProgreso(100);
-  setReflejosResultado(null);
+  const manejarClickReflejo = () => {
+    if (intervaloReflejos) clearInterval(intervaloReflejos);
+    setReflejosActivo(false);
+    setReflejosResultado('exito');
+    sonidoCorrect.play();
+  };
 
-  const intervalo = setInterval(() => {
-    setReflejosProgreso(prev => {
-      if (prev <= 0) {
-        clearInterval(intervalo);
-        setReflejosActivo(false);
-        setReflejosResultado('fallo');
-        sonidoError.play();
-        setTimeout(() => setFalloReflejos(true), 300);
-        return 0;
-      }
-      return prev - 2;
-    });
-  }, 100); // cada 100ms baja 2%
-  setIntervaloReflejos(intervalo);
-};
-
-const manejarClickReflejo = () => {
-  if (intervaloReflejos) clearInterval(intervaloReflejos);
-  setReflejosActivo(false);
-  setReflejosResultado('exito');
-  sonidoCorrect.play();
-};
   const mover = (dx, dy) => {
     const nuevoX = pos.x + dx;
     const nuevoY = pos.y + dy;
+    const clave = `${nuevoX}-${nuevoY}`;
+    const esMinijuego = Object.keys(minijuegosReflejos).includes(clave);
+
+    if (esMinijuego && !reflejosActivo && !minijuegosReflejos[clave]) {
+      iniciarReflejos(clave);
+      return;
+    }
 
     const enZona = areaVigilada.some(c => c.x === nuevoX && c.y === nuevoY);
     if (enZona && emperadorObservando) {
@@ -253,12 +287,7 @@ const manejarClickReflejo = () => {
       return;
     }
 
-    if (nuevoX === 4 && nuevoY === 3 && !reflejosActivo && reflejosResultado !== 'exito') {
-  iniciarReflejos();
-  return;
-}
-
-  if (reflejosResultado === 'fallo') return;
+    if (reflejosResultado === 'fallo') return;
 
     // 📍 Activar obstáculo dinámico en (3, 6)
     if (nuevoX === 3 && nuevoY === 6 && !activarPared) {
@@ -274,6 +303,22 @@ const manejarClickReflejo = () => {
       mapaInicial[19][6] = 0;
       return;
     }
+
+    // 🚪 Si intenta entrar a la puerta sin llave, se bloquea
+    if (nuevoX === puertaPos.x && nuevoY === puertaPos.y && !tieneLlave) {
+      sonidoError.play();
+      setMensaje("🔒 Puerta cerrada. Necesitas una llave.");
+      setTimeout(() => setMensaje(""), 2000);
+      return;
+    }
+    // 🔑 Si encuentra la llave, la recoge
+    if (nuevoX === llavePos.x && nuevoY === llavePos.y && !tieneLlave) {
+      setTieneLlave(true);
+      sonidoCorrect.play();
+      setMensaje("🔑 ¡Has recogido la llave!");
+      setTimeout(() => setMensaje(""), 2000);
+    }
+
 
     if (mapaInicial[nuevoY][nuevoX] === 0) {
       const pregunta = preguntas.find(o => o.x === nuevoX && o.y === nuevoY && !preguntasRespondidas.includes(o.id));
@@ -450,6 +495,14 @@ const manejarClickReflejo = () => {
               <div key={`${x}-${y}`} style={styleFinal}>
                 {preguntas.some(o => o.x === x && o.y === y && !preguntasRespondidas.includes(o.id)) ? '🤖' : ''}
                 {checkpoints.some(c => c.x === x && c.y === y) ? '🔵' : ''}
+                {Object.entries(minijuegosReflejos).some(([coord, completado]) => {
+                  const [mx, my] = coord.split('-').map(Number);
+                  return mx === x && my === y && !completado;
+                }) ? '⚡' : ''}
+                {(x === llavePos.x && y === llavePos.y && !tieneLlave) && '🔑'}
+                {(x === puertaPos.x && y === puertaPos.y && !tieneLlave) && '🔒'}
+
+
                 {/* 👁️ DROIDE DE VIGILANCIA en posición 18,6 */}
                 {(x === 18 && y === 6) && (
                   <motion.div
@@ -465,15 +518,11 @@ const manejarClickReflejo = () => {
                   </motion.div>
                 )}
               </div>
-              
+
             );
           })
         )}
-        {mensajeVigilancia && (
-          <div className="alerta-emperador">
-            ¡El Emperador te ha visto!
-          </div>
-        )}
+
       </div>
       <div style={{ flexGrow: 1 }} />
 
@@ -593,62 +642,62 @@ const manejarClickReflejo = () => {
           </div>
         </motion.div>
       )}
-    {reflejosActivo && (
-  <motion.div
-    style={{
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      background: '#111',
-      border: '2px solid #00ffff',
-      borderRadius: '10px',
-      padding: '20px',
-      zIndex: 9999,
-      width: '300px',
-      textAlign: 'center',
-      fontFamily: 'monospace',
-      boxShadow: '0 0 12px #00ffffaa',
-    }}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-  >
-    <p>¡Presiona el botón antes que la barra llegue a cero!</p>
-    <div
-      style={{
-        margin: '10px 0',
-        height: '20px',
-        background: '#333',
-        border: '1px solid #555',
-        borderRadius: '8px',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          width: `${reflejosProgreso}%`,
-          height: '100%',
-          background: reflejosProgreso > 30 ? '#00ff00' : '#ff0000',
-          transition: 'width 0.1s linear',
-        }}
-      />
-    </div>
-    <button
-      onClick={manejarClickReflejo}
-      style={{
-        padding: '10px 20px',
-        background: '#00ffff22',
-        border: '1px solid #00ffff',
-        color: '#00ffff',
-        borderRadius: '6px',
-        marginTop: '10px',
-        cursor: 'pointer',
-      }}
-    >
-      Click
-    </button>
-  </motion.div>
-)}
+      {reflejosActivo && (
+        <motion.div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#111',
+            border: '2px solid #00ffff',
+            borderRadius: '10px',
+            padding: '20px',
+            zIndex: 9999,
+            width: '300px',
+            textAlign: 'center',
+            fontFamily: 'monospace',
+            boxShadow: '0 0 12px #00ffffaa',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <p>¡Presiona el botón antes que la barra llegue a cero!</p>
+          <div
+            style={{
+              margin: '10px 0',
+              height: '20px',
+              background: '#333',
+              border: '1px solid #555',
+              borderRadius: '8px',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                width: `${reflejosProgreso}%`,
+                height: '100%',
+                background: reflejosProgreso > 30 ? '#00ff00' : '#ff0000',
+                transition: 'width 0.1s linear',
+              }}
+            />
+          </div>
+          <button
+            onClick={manejarClickReflejo}
+            style={{
+              padding: '10px 20px',
+              background: '#00ffff22',
+              border: '1px solid #00ffff',
+              color: '#00ffff',
+              borderRadius: '6px',
+              marginTop: '10px',
+              cursor: 'pointer',
+            }}
+          >
+            Click
+          </button>
+        </motion.div>
+      )}
 
     </div>
 
