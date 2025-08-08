@@ -51,7 +51,7 @@ const preguntas = [
     x: 11,
     y: 8,
     pregunta: "¿Quién entrenó a Luke Skywalker?",
-    opciones: ["Mace Windu", "Obi-Wan", "Yoda", "Qui-Gon"],
+    opciones: ["Mace Windu", "Obi-Wan","Qui-Gon", "Yoda"],
     correcta: "Yoda",
     id: 2
   },
