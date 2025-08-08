@@ -32,6 +32,14 @@ const mapaInicial = [
 
 const preguntas = [
   {
+    x:5,
+    y:1,
+    pregunta:"¿Quién mató a Jango Fett?",
+    opciones:["Obi-Wan Kenobi","Mace Windu","Anakin Skywalker","Kit Fisto"],
+    correcta: "Mace Windu",
+    id: 0
+  },
+  {
     x: 5,
     y: 5,
     pregunta: "¿Cuál es el color del sable de Mace Windu?",
@@ -127,6 +135,30 @@ const preguntas = [
     opciones: ["Convertirlo al Lado Oscuro", "Destruirlo", "Capturarlo", "Usarlo como espía"],
     correcta: "Convertirlo al Lado Oscuro"
   },
+  {
+    id: 13,
+    x: 4,
+    y: 9,
+    pregunta: "¿Qué tipo de nave es el Halcón Milenario?",
+    opciones: ["Corellian YT-1300f","Firespray-31","CR90 Corvette","Lambda-class Shuttle"],
+    correcta: "Corellian YT-1300f"
+  },
+  {
+    id: 14,
+    x: 13,
+    y: 1,
+    pregunta: "¿Quién es el maestro de Qui-Gon Jinn?",
+    opciones: ["Yoda","Conde Dooku","Mace Windu","Sifo-Dyas"],
+    correcta: "Conde Dooku"
+  },
+  {
+    id: 15,
+    x: 1,
+    y: 12,
+    pregunta: "¿Cómo se llama el droide traductor de Jabba el Hutt?",
+    opciones: ["EV-9D9","TC-14","C-3PO","8D8"],
+    correcta: "8D8"
+  }
 ];
 
 const areaVigilada = [
@@ -161,6 +193,7 @@ export default function LaberintoJedi() {
     '17-11': false,
     '15-19': false,
     '1-16': false,
+    '11-2': false,
   });
   const [reflejosActivoClave, setReflejosActivoClave] = useState(null);
   const [tieneLlave, setTieneLlave] = useState(false);
